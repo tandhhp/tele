@@ -1,0 +1,50 @@
+import { apiTeamUsers } from "@/services/users/team";
+import { LeftOutlined } from "@ant-design/icons";
+import { PageContainer, ProTable } from "@ant-design/pro-components"
+import { useParams, history } from "@umijs/max";
+import { Button } from "antd";
+
+const Index: React.FC = () => {
+
+    const { id } = useParams<{ id: string }>();
+
+    return (
+        <PageContainer extra={<Button icon={<LeftOutlined />} onClick={() => history.back()}>Quay lại</Button>}>
+            <ProTable
+                request={apiTeamUsers}
+                params={{ teamId: id }}
+                search={{
+                    layout: 'vertical'
+                }}
+                columns={[
+                    {
+                        title: '#',
+                        valueType: 'indexBorder',
+                        width: 30,
+                        align: 'center'
+                    },
+                    {
+                        title: 'Họ tên',
+                        dataIndex: 'name'
+                    },
+                    {
+                        title: 'Ngày sinh',
+                        dataIndex: 'dateOfBirth',
+                        valueType: 'date',
+                        search: false
+                    },
+                    {
+                        title: 'SDT',
+                        dataIndex: 'phoneNumber'
+                    },
+                    {
+                        title: 'Email',
+                        dataIndex: 'email'
+                    }
+                ]}
+            />
+        </PageContainer>
+    )
+}
+
+export default Index;
