@@ -1,8 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Waffle.Entities.Contacts;
 
-public class Contact : BaseEntity
+public class Contact : AuditEntity
 {
     [StringLength(450)]
     public string? Name { get; set; }
@@ -14,11 +15,17 @@ public class Contact : BaseEntity
     public string? Note { get; set; }
     [StringLength(500)]
     public string? Address { get; set; }
-    public string? Meta { get; set; }
-    public DateTime CreatedDate { get; set; }
-    public Guid? RefId { get; set; }
     public ContactStatus Status { get; set; }
+    [ForeignKey(nameof(Transport))]
+    public int? TransportId { get; set; }
+    [ForeignKey(nameof(District))]
+    public int? DistrictId { get; set; }
+    public bool? Gender { get; set; }
+    public MarriedStatus? MarriedStatus { get; set; }
+    public Guid? UserId { get; set; }
 
+    public virtual Transport? Transport { get; set; }
+    public virtual District? District { get; set; }
     public List<ContactActivity>? Activities { get; set; }
 }
 
@@ -26,6 +33,18 @@ public enum ContactStatus
 {
     New,
     Blacklisted
+}
+
+public enum MarriedStatus
+{
+    [Display(Name = "Độc thân")]
+    Single,
+    [Display(Name = "Đã kết hôn")]
+    Married,
+    [Display(Name = "Ly hôn")]
+    Divorced,
+    [Display(Name = "Góa")]
+    Widowed
 }
 
 public class ContactMeta

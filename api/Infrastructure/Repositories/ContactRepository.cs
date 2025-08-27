@@ -21,9 +21,7 @@ public class ContactRepository(ApplicationDbContext context) : EfRepository<Cont
                         c.PhoneNumber,
                         c.Note,
                         c.Address,
-                        c.Meta,
                         c.CreatedDate,
-                        c.RefId,
                         c.Status
                     };
         if (!string.IsNullOrWhiteSpace(filterOptions.Name))

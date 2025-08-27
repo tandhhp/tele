@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Waffle.Entities.Contacts;
 
 namespace Waffle.Entities;
 
@@ -11,4 +12,5 @@ public class District : BaseEntity<int>
     public string Name { get; set; } = default!;
 
     public Province? Province { get; set; }
+    public virtual ICollection<Contact>? Contacts { get; set; }
 }

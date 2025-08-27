@@ -341,9 +341,6 @@ Thông tin liên hệ của Bộ phận <b><i>Trải Nghiệm Khách Hàng</i></
     public async Task<ListResult<dynamic>> ListContactAsync(ContactFilterOptions filterOptions)
     {
         var query = from a in _context.Contacts
-                    join b in _context.Users on a.RefId equals b.Id
-                    into ab
-                    from b in ab.DefaultIfEmpty()
                     where a.Status != ContactStatus.Blacklisted
                     select new
                     {
@@ -352,8 +349,7 @@ Thông tin liên hệ của Bộ phận <b><i>Trải Nghiệm Khách Hàng</i></
                         a.Email,
                         a.CreatedDate,
                         a.Name,
-                        a.Note,
-                        RefName = b.Name
+                        a.Note
                     };
         if (!string.IsNullOrWhiteSpace(filterOptions.PhoneNumber))
         {

@@ -1,16 +1,18 @@
 import { deleteContact, listContact } from "@/services/contact";
-import { DeleteOutlined, EyeOutlined, FolderOutlined, MoreOutlined, StopOutlined } from "@ant-design/icons";
+import { DeleteOutlined, EyeOutlined, FolderOutlined, MoreOutlined, PlusOutlined, StopOutlined } from "@ant-design/icons";
 import { ActionType, PageContainer, ProColumnType, ProTable } from "@ant-design/pro-components"
 import { history, Link } from "@umijs/max";
 import { Button, Dropdown, Popconfirm, Tooltip, message } from "antd";
 import { useRef, useState } from "react";
 import BlockContactModal from "./components/block-modal";
+import ContactForm from "./components/form";
 
 const ContactPage: React.FC = () => {
 
     const actionRef = useRef<ActionType>();
     const [contact, setContact] = useState<any>();
     const [openBlock, setOpenBlock] = useState<boolean>(false);
+    const [openForm, setOpenForm] = useState<boolean>(false);
 
     const columns: ProColumnType<any>[] = [
         {
@@ -87,7 +89,7 @@ const ContactPage: React.FC = () => {
     ]
 
     return (
-        <PageContainer>
+        <PageContainer extra={<Button type="primary" icon={<PlusOutlined />} onClick={() => setOpenForm(true)}>Tạo mới</Button>}>
             <ProTable
                 scroll={{
                     x: true
@@ -102,6 +104,7 @@ const ContactPage: React.FC = () => {
             <BlockContactModal open={openBlock} contact={contact} reload={() => {
                 actionRef.current?.reload();
             }} onOpenChange={setOpenBlock} />
+            <ContactForm open={openForm} onOpenChange={setOpenForm} />
         </PageContainer>
     )
 }

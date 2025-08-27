@@ -73,6 +73,9 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     public DbSet<PlasmaCheckIn> PlasmaCheckIns { get; set; }
     #endregion
     public DbSet<Notification> Notifications { get; set; }
+    public DbSet<Transport> Transports { get; set; }
+    public DbSet<CallStatus> CallStatuses { get; set; }
+    public DbSet<Room> Rooms { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {

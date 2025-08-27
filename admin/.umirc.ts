@@ -6,7 +6,7 @@ export default defineConfig({
   antd: {
     theme: {
       token: {
-        colorPrimary: '#177196',
+        colorPrimary: '#ca8a04',
         fontFamily: '"Quicksand", sans-serif',
         fontOpticalSizing: 'auto',
         fontWeight: 500

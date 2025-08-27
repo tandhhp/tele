@@ -65,6 +65,9 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IBranchRepository, BranchRepository>();
         services.AddScoped<IBranchService, BranchService>();
 
+        services.AddScoped<ITransportRepository, TransportRepository>();
+        services.AddScoped<ITransportService, TransportService>();
+
         services.AddScoped<ICurrentUser, CurrentUser>();
 
         services.AddScoped<IGenerator, LeafGenerator>();

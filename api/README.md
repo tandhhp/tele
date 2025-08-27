@@ -60,7 +60,3 @@ Read document:
 | # | Name | URL                                 |
 |---|------|-------------------------------------|
 | 1 | API  | https://waffleverse.gitbook.io/api/ |
-
-email: noreply@nuras.com.vn
-password: 3M@ail0f764h37hc
-server: mail.nuras.com.vn
