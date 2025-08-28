@@ -37,6 +37,12 @@ public class EditModel : PageModel
     {
         var user = await _userManager.FindByIdAsync(UserId);
         if (user is null) return NotFound();
+        if (string.IsNullOrWhiteSpace(Name))
+        {
+            ErrorMessage = "Name is required.";
+            CurrentUser = user;
+            return Page();
+        }
         user.Name = Name;
         user.Address = Address;
         user.PhoneNumber = PhoneNumber;

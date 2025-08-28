@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Waffle.Models;
-using Waffle.Models.ViewModels.Logs;
+using Waffle.Models.Histories;
 
 namespace Waffle.Core.Interfaces.IService;
 
@@ -10,5 +10,5 @@ public interface ILogService
     Task<IdentityResult> DeleteAllAsync();
     Task<IdentityResult> DeleteAsync(Guid id);
     Task ExceptionAsync(Exception ex);
-    Task<ListResult<AppLogListItem>> ListAsync(SearchFilterOptions filterOptions);
+    Task<ListResult<HistoryListItem>> ListAsync(SearchFilterOptions filterOptions);
 }

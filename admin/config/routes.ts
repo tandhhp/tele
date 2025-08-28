@@ -616,13 +616,6 @@ export default [
     hideInMenu: true
   },
   {
-    icon: 'InfoCircleOutlined',
-    name: 'Lịch sử',
-    path: '/logs',
-    access: 'canAdmin',
-    component: './logs'
-  },
-  {
     path: '*',
     layout: false,
     component: './404',

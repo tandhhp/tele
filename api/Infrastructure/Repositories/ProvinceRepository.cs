@@ -10,6 +10,8 @@ namespace Waffle.Infrastructure.Repositories;
 
 public class ProvinceRepository(ApplicationDbContext context) : EfRepository<Province>(context), IProvinceRepository
 {
+    public async Task<bool> ExistsAsync(string name) => await _context.Provinces.AnyAsync(p => p.Name == name);
+
     public async Task<ListResult<object>> ListAsync(ProvinceFilterOptions filterOptions)
     {
         var query = from p in _context.Provinces

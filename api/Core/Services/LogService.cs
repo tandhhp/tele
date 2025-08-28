@@ -4,7 +4,7 @@ using Waffle.Core.Interfaces.IRepository;
 using Waffle.Core.Interfaces.IService;
 using Waffle.Entities;
 using Waffle.Models;
-using Waffle.Models.ViewModels.Logs;
+using Waffle.Models.Histories;
 
 namespace Waffle.Core.Services;
 
@@ -50,5 +50,5 @@ public class LogService(IWebHostEnvironment _webHostEnvironment, ICurrentUser _c
         });
     }
 
-    public Task<ListResult<AppLogListItem>> ListAsync(SearchFilterOptions filterOptions) => _logRepository.ListAsync(filterOptions);
+    public Task<ListResult<HistoryListItem>> ListAsync(SearchFilterOptions filterOptions) => _logRepository.ListAsync(filterOptions);
 }

@@ -1,13 +1,21 @@
 import { apiProvinceList } from "@/services/settings/province";
-import { DeleteOutlined, MoreOutlined, SettingOutlined } from "@ant-design/icons";
-import { PageContainer, ProTable } from "@ant-design/pro-components"
+import { DeleteOutlined, EditOutlined, MoreOutlined, PlusOutlined, SettingOutlined } from "@ant-design/icons";
+import { ActionType, PageContainer, ProTable } from "@ant-design/pro-components"
 import { history } from "@umijs/max";
 import { Button, Dropdown, Popconfirm } from "antd";
+import ProvinceForm from "./components/form";
+import { useRef, useState } from "react";
 
 const Index: React.FC = () => {
+
+    const actionRef = useRef<ActionType>();
+    const [open, setOpen] = useState<boolean>(false);
+    const [selectedProvince, setSelectedProvince] = useState<any>(null);
+
     return (
-        <PageContainer>
+        <PageContainer extra={<Button type="primary" icon={<PlusOutlined />} onClick={() => setOpen(true)}>Thêm mới</Button>}>
             <ProTable
+                actionRef={actionRef}
                 search={{
                     layout: 'vertical'
                 }}
@@ -42,6 +50,15 @@ const Index: React.FC = () => {
                                         onClick: () => {
                                             history.push(`/settings/province/district/${record.id}`);
                                         }
+                                    },
+                                    {
+                                        key: 'edit',
+                                        label: 'Chỉnh sửa',
+                                        icon: <EditOutlined />,
+                                        onClick: () => {
+                                            setSelectedProvince(record);
+                                            setOpen(true);
+                                        }
                                     }
                                 ]
                             }}>
@@ -58,6 +75,7 @@ const Index: React.FC = () => {
                 ]}
                 request={apiProvinceList}
             />
+            <ProvinceForm open={open} onOpenChange={setOpen} data={selectedProvince} reload={() => actionRef.current?.reload()} />
         </PageContainer>
     )
 }
