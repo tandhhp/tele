@@ -1,4 +1,5 @@
 import {
+  CalendarOutlined,
   LogoutOutlined,
   SettingOutlined,
   UserOutlined,
@@ -55,7 +56,7 @@ export const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({ menu }) => {
       const { key } = event;
       if (key === 'logout') {
         flushSync(() => {
-          setInitialState((s) => ({ ...s, currentUser: undefined }));
+          setInitialState((s: any) => ({ ...s, currentUser: undefined }));
         });
         loginOut();
         return;
@@ -64,6 +65,10 @@ export const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({ menu }) => {
         return;
       } else if (key === 'settings') {
         history.push(`/users/center/${initialState?.currentUser?.id}`);
+        return;
+      }
+      else if (key === 'calendar') {
+        history.push(`calendar`);
         return;
       }
       history.push(`/accounts/${key}`);
@@ -92,18 +97,19 @@ export const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({ menu }) => {
   }
 
   const menuItems = [
-    ...(menu
-      ? [
-        {
-          key: 'settings',
-          icon: <SettingOutlined />,
-          label: 'Cài đặt',
-        },
-        {
-          type: 'divider' as const,
-        },
-      ]
-      : []),
+    {
+      key: 'calendar',
+      icon: <CalendarOutlined />,
+      label: 'Lịch làm việc'
+    },
+    {
+      key: 'settings',
+      icon: <SettingOutlined />,
+      label: 'Cài đặt',
+    },
+    {
+      type: 'divider' as const,
+    },
     {
       key: 'logout',
       icon: <LogoutOutlined />,

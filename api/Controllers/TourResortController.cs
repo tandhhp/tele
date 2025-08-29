@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Waffle.Core.Foundations;
 using Waffle.Core.Helpers;
 using Waffle.Core.Interfaces;
 using Waffle.Data;
-using Waffle.Foundations;
 
 namespace Waffle.Controllers
 {

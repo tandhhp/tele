@@ -43,9 +43,6 @@ export async function getInitialState(): Promise<{
 export const layout: RunTimeLayoutConfig = ({ initialState }) => {
   return {
     logo: logo,
-    menu: {
-      locale: false,
-    },
     layout: 'mix',
     token: {
       sider: {

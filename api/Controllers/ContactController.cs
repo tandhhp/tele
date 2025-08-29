@@ -6,7 +6,6 @@ using Waffle.Core.Services.Contacts.Models;
 using Microsoft.AspNetCore.Identity;
 using Waffle.Core.Interfaces.IService;
 using Waffle.Extensions;
-using Waffle.Foundations;
 using Waffle.Models.Filters;
 using Microsoft.EntityFrameworkCore;
 using Waffle.Models;
@@ -17,6 +16,7 @@ using OfficeOpenXml.Style;
 using Waffle.Core.Helpers;
 using Waffle.Models.Args;
 using Waffle.Core.Services.Events.Models;
+using Waffle.Core.Foundations;
 
 namespace Waffle.Controllers;
 

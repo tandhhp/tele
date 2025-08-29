@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Waffle.Core.Constants;
+using Waffle.Core.Foundations;
 using Waffle.Core.Interfaces.IService;
 using Waffle.Entities;
-using Waffle.Foundations;
 using Waffle.Models;
 
 namespace Waffle.Controllers;

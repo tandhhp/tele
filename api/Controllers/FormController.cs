@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using OfficeOpenXml.FormulaParsing.LexicalAnalysis;
 using Waffle.Core.Constants;
+using Waffle.Core.Foundations;
 using Waffle.Core.Helpers;
 using Waffle.Core.Interfaces.IService;
 using Waffle.Data;
@@ -10,7 +11,6 @@ using Waffle.Entities;
 using Waffle.Entities.Tours;
 using Waffle.Extensions;
 using Waffle.ExternalAPI;
-using Waffle.Foundations;
 using Waffle.Models.Args;
 using Waffle.Models.Filters;
 

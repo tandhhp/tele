@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Waffle.Core.Foundations;
 using Waffle.Data;
 using Waffle.Entities;
-using Waffle.Foundations;
 using Waffle.Models;
 using Waffle.Models.Calendars;
 using Waffle.Models.Filters;

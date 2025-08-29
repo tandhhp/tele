@@ -24,7 +24,8 @@ export default [
     name: 'Lịch làm việc',
     icon: 'CalendarOutlined',
     path: '/calendar',
-    component: './calendar'
+    component: './calendar',
+    hideInMenu: true
   },
   {
     name: 'component',

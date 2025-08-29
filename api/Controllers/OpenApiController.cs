@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Waffle.Core.Foundations;
 using Waffle.ExternalAPI.Interfaces;
 using Waffle.ExternalAPI.Models.WordPress;
-using Waffle.Foundations;
 
 namespace Waffle.Controllers;
 

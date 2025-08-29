@@ -1,15 +1,21 @@
 import { apiDistrictList } from "@/services/settings/district";
 import { LeftOutlined, PlusOutlined } from "@ant-design/icons";
-import { PageContainer, ProTable } from "@ant-design/pro-components"
+import { ActionType, PageContainer, ProTable } from "@ant-design/pro-components"
 import { history } from "@umijs/max";
 import { Button } from "antd";
 import DistrictForm from "./components/form";
+import { useRef, useState } from "react";
 
 const Index: React.FC = () => {
+
+    const actionRef = useRef<ActionType>();
+    const [open, setOpen] = useState<boolean>(false);
+
     return (
         <PageContainer extra={<Button icon={<LeftOutlined />} onClick={() => history.back()}>Quay lại</Button>}>
             <ProTable
-                headerTitle={<Button type="primary" icon={<PlusOutlined />}>Thêm mới</Button>}
+                actionRef={actionRef}
+                headerTitle={<Button type="primary" icon={<PlusOutlined />} onClick={() => setOpen(true)}>Thêm mới</Button>}
                 columns={[
                     {
                         title: "#",
@@ -28,7 +34,7 @@ const Index: React.FC = () => {
                 rowKey={`id`}
                 request={apiDistrictList}
             />
-            <DistrictForm />
+            <DistrictForm open={open} onOpenChange={setOpen} reload={() => actionRef.current?.reload()} />
         </PageContainer>
     )
 }

@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Waffle.Core.Foundations;
 using Waffle.Core.Interfaces.IService;
 using Waffle.Core.Services.Departments.Models;
-using Waffle.Foundations;
 using Waffle.Models;
 
 namespace Waffle.Controllers;

@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Waffle.Foundations;
+namespace Waffle.Core.Foundations;
 
 [Authorize]
 [Route("api/[controller]")]
