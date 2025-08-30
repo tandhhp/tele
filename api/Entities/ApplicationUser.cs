@@ -72,7 +72,9 @@ public enum Branch1
 
 public enum UserStatus
 {
+    [Display(Name = "Đang làm")]
     Working,
+    [Display(Name = "Nghỉ việc")]
     Leave
 }
 

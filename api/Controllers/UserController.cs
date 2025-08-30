@@ -24,6 +24,7 @@ using Waffle.Models.Files;
 using Waffle.Models.Filters;
 using Waffle.Models.Filters.Users;
 using Waffle.Models.Params;
+using Waffle.Models.Users;
 using Waffle.Models.ViewModels;
 using Waffle.Models.ViewModels.Users;
 
@@ -2359,4 +2360,7 @@ public class UserController : BaseController
 
     [HttpPost("approve-loan")]
     public async Task<IActionResult> ApproveLoanAsync([FromBody] ApproveLoanArgs args) => Ok(await _loanService.ApproveLoanAsync(args));
+
+    [HttpPost]
+    public async Task<IActionResult> CreateAsync([FromBody] CreateUserArgs args) => Ok(await _userService.CreateAsync(args));
 }

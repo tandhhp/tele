@@ -2,6 +2,7 @@
 using Waffle.Entities;
 using Waffle.Models;
 using Waffle.Models.Filters;
+using Waffle.Models.Users;
 using Waffle.Models.ViewModels.Users;
 
 namespace Waffle.Core.Interfaces.IService;
@@ -17,4 +18,5 @@ public interface IUserService
     Task<ListResult<dynamic>> ListContactAsync(ContactFilterOptions filterOptions);
     Task SendEmailToCardHolderAsync(CreateUserModel user);
     Task<ListResult<object>> PointsAsync(UserPointFilterOptions filterOptions);
+    Task<TResult> CreateAsync(CreateUserArgs args);
 }

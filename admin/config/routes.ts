@@ -312,7 +312,7 @@ export default [
       },
       {
         name: 'Hồ sơ',
-        path: '/users/member/:id',
+        path: '/users/profile',
         component: './users/profile',
         hideInMenu: true,
       },
@@ -345,11 +345,6 @@ export default [
         path: '/users/contact',
         component: './users/contact',
         access: 'canCX',
-      },
-      {
-        name: 'Team',
-        path: '/users/team',
-        component: './users/team'
       },
       {
         name: 'Thay đổi nhân sự',

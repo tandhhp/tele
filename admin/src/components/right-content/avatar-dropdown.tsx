@@ -60,15 +60,17 @@ export const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({ menu }) => {
         });
         loginOut();
         return;
-      } else if (key === 'profile') {
-        history.push(`/users/member/${initialState?.currentUser?.id}`);
-        return;
-      } else if (key === 'settings') {
+      }
+      if (key === 'settings') {
         history.push(`/users/center/${initialState?.currentUser?.id}`);
         return;
       }
-      else if (key === 'calendar') {
+      if (key === 'calendar') {
         history.push(`calendar`);
+        return;
+      }
+      if (key === 'profile') {
+        history.push(`/users/profile`);
         return;
       }
       history.push(`/accounts/${key}`);
@@ -97,6 +99,11 @@ export const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({ menu }) => {
   }
 
   const menuItems = [
+    {
+      key: 'profile',
+      icon: <UserOutlined />,
+      label: 'Hồ sơ'
+    },
     {
       key: 'calendar',
       icon: <CalendarOutlined />,

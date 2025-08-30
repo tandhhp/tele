@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Waffle.Entities.Contacts;
 
 namespace Waffle.Entities.Users;
 
@@ -6,4 +7,6 @@ public class JobKind : BaseEntity<int>
 {
     [StringLength(256)]
     public string Name { get; set; } = default!;
+
+    public virtual ICollection<Contact>? Contacts { get; set; }
 }

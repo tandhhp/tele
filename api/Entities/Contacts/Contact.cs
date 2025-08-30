@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Waffle.Entities.Users;
 
 namespace Waffle.Entities.Contacts;
 
@@ -23,9 +24,12 @@ public class Contact : AuditEntity
     public bool? Gender { get; set; }
     public MarriedStatus? MarriedStatus { get; set; }
     public Guid? UserId { get; set; }
+    [ForeignKey(nameof(JobKind))]
+    public int? JobKindId { get; set; }
 
     public virtual Transport? Transport { get; set; }
     public virtual District? District { get; set; }
+    public virtual JobKind? JobKind { get; set; }
     public List<ContactActivity>? Activities { get; set; }
 }
 

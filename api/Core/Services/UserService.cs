@@ -10,24 +10,14 @@ using Waffle.Entities.Contacts;
 using Waffle.ExternalAPI;
 using Waffle.Models;
 using Waffle.Models.Filters;
+using Waffle.Models.Users;
 using Waffle.Models.ViewModels.Users;
 
 namespace Waffle.Core.Services;
 
-public class UserService : IUserService
+public class UserService(UserManager<ApplicationUser> _userManager, RoleManager<ApplicationRole> _roleManager, ApplicationDbContext _context, ICurrentUser currentUser) : IUserService
 {
-    private readonly UserManager<ApplicationUser> _userManager;
-    private readonly RoleManager<ApplicationRole> _roleManager;
-    private readonly ApplicationDbContext _context;
-    private readonly ICurrentUser _currentUser;
-
-    public UserService(UserManager<ApplicationUser> userManager, RoleManager<ApplicationRole> roleManager, ApplicationDbContext context, ICurrentUser currentUser)
-    {
-        _userManager = userManager;
-        _roleManager = roleManager;
-        _context = context;
-        _currentUser = currentUser;
-    }
+    private readonly ICurrentUser _currentUser = currentUser;
 
     private async Task<ApplicationUser?> FindAsync(Guid id) => await _context.Users.FindAsync(id);
 
@@ -394,5 +384,19 @@ Thông tin liên hệ của Bộ phận <b><i>Trải Nghiệm Khách Hàng</i></
                         TopupBy = b.Name
                     };
         return await ListResult<object>.Success(query, filterOptions);
+    }
+
+    public async Task<TResult> CreateAsync(CreateUserArgs args)
+    {
+        await _userManager.CreateAsync(new ApplicationUser
+        {
+            UserName = args.UserName,
+            Email = args.Email,
+            CreatedDate = DateTime.Now,
+            Status = UserStatus.Working,
+            Name = args.Name,
+            PhoneNumber = args.PhoneNumber
+        }, args.Password);
+        return TResult.Success;
     }
 }
