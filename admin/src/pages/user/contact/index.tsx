@@ -1,11 +1,12 @@
 import { deleteContact, listContact } from "@/services/contact";
-import { DeleteOutlined, EyeOutlined, FolderOutlined, MoreOutlined, PlusOutlined, StopOutlined } from "@ant-design/icons";
+import { DeleteOutlined, EditOutlined, EyeOutlined, FolderOutlined, ManOutlined, MoreOutlined, PhoneOutlined, PlusOutlined, StopOutlined, WomanOutlined } from "@ant-design/icons";
 import { ActionType, PageContainer, ProColumnType, ProTable } from "@ant-design/pro-components"
 import { history, Link } from "@umijs/max";
 import { Button, Dropdown, Popconfirm, Tooltip, message } from "antd";
 import { useRef, useState } from "react";
 import BlockContactModal from "./components/block-modal";
 import ContactForm from "./components/form";
+import CallForm from "./components/call";
 
 const ContactPage: React.FC = () => {
 
@@ -13,6 +14,7 @@ const ContactPage: React.FC = () => {
     const [contact, setContact] = useState<any>();
     const [openBlock, setOpenBlock] = useState<boolean>(false);
     const [openForm, setOpenForm] = useState<boolean>(false);
+    const [openCall, setOpenCall] = useState<boolean>(false);
 
     const columns: ProColumnType<any>[] = [
         {
@@ -22,7 +24,16 @@ const ContactPage: React.FC = () => {
         },
         {
             title: 'Họ và tên',
-            dataIndex: 'name'
+            dataIndex: 'name',
+            render: (text, record) => {
+                if (record.gender === true) {
+                    return <><WomanOutlined className="text-pink-500" /> {text}</>
+                }
+                if (record.gender === false) {
+                    return <><ManOutlined className="text-blue-500" /> {text}</>
+                }
+                return text;
+            }
         },
         {
             title: 'Số điện thoại',
@@ -33,15 +44,15 @@ const ContactPage: React.FC = () => {
             dataIndex: 'email'
         },
         {
-            title: 'Ngày liên hệ',
+            title: 'Ngày tạo',
             dataIndex: 'createdDate',
-            valueType: 'dateTime',
+            valueType: 'date',
             search: false,
-            width: 160
+            width: 100
         },
         {
-            title: 'Người giới thiệu',
-            dataIndex: 'refName',
+            title: 'Phụ trách',
+            dataIndex: 'userName',
             search: false
         },
         {
@@ -59,9 +70,23 @@ const ContactPage: React.FC = () => {
                             key: 'view',
                             label: 'Chi tiết',
                             onClick: () => {
-                                history.push(`/users/contact/activity/${entity.id}`);
+                                history.push(`/user/contact/center/${entity.id}`);
                             },
                             icon: <EyeOutlined />
+                        },
+                        {
+                            key: 'edit',
+                            label: 'Chỉnh sửa',
+                            icon: <EditOutlined />
+                        },
+                        {
+                            key: 'call',
+                            label: 'Cuộc gọi',
+                            onClick: () => {
+                                setContact(entity);
+                                setOpenCall(true);
+                            },
+                            icon: <PhoneOutlined />
                         },
                         {
                             key: 'block',
@@ -104,7 +129,8 @@ const ContactPage: React.FC = () => {
             <BlockContactModal open={openBlock} contact={contact} reload={() => {
                 actionRef.current?.reload();
             }} onOpenChange={setOpenBlock} />
-            <ContactForm open={openForm} onOpenChange={setOpenForm} />
+            <ContactForm open={openForm} onOpenChange={setOpenForm} reload={() => actionRef.current?.reload()} />
+            <CallForm open={openCall} data={contact} onOpenChange={setOpenCall} />
         </PageContainer>
     )
 }

@@ -6,5 +6,5 @@ namespace Waffle.Core.Services.Tele;
 
 public class CallStatusService(ICallStatusRepository _callStatusRepository) : ICallStatusService
 {
-    public Task<object> OptionsAsync(SelectOptions? options) => _callStatusRepository.OptionsAsync(options);
+    public Task<object> OptionsAsync(SelectOptions options) => _callStatusRepository.OptionsAsync(options);
 }

@@ -9,7 +9,7 @@ namespace Waffle.Infrastructure.Repositories.Tele;
 
 public class CallStatusRepository(ApplicationDbContext context) : EfRepository<CallStatus>(context), ICallStatusRepository
 {
-    public async Task<object> OptionsAsync(SelectOptions? options) => await _context.CallStatuses.Select(x => new
+    public async Task<object> OptionsAsync(SelectOptions options) => await _context.CallStatuses.Select(x => new
     {
         Label = x.Name,
         Value = x.Id

@@ -23,7 +23,7 @@ public class ProvinceRepository(ApplicationDbContext context) : EfRepository<Pro
                     };
         if (!string.IsNullOrWhiteSpace(filterOptions.Name))
         {
-            query = query.Where(p => p.Name.Contains(filterOptions.Name));
+            query = query.Where(p => p.Name.ToLower().Contains(filterOptions.Name.ToLower()));
         }
         query = query.OrderBy(p => p.Name);
         return await ListResult<object>.Success(query, filterOptions);
@@ -39,7 +39,7 @@ public class ProvinceRepository(ApplicationDbContext context) : EfRepository<Pro
                     };
         if (!string.IsNullOrWhiteSpace(keyWords))
         {
-            query = query.Where(p => p.Name.Contains(keyWords, StringComparison.CurrentCultureIgnoreCase));
+            query = query.Where(p => p.Name.ToLower().Contains(keyWords.ToLower()));
         }
         query = query.OrderBy(p => p.Name);
         return await query.Select(x => new

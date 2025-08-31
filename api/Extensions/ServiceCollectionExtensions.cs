@@ -1,7 +1,9 @@
 ﻿using Waffle.Core.Foundations;
 using Waffle.Core.Interfaces;
 using Waffle.Core.Interfaces.IRepository;
+using Waffle.Core.Interfaces.IRepository.Tele;
 using Waffle.Core.Interfaces.IService;
+using Waffle.Core.Interfaces.IService.Tele;
 using Waffle.Core.Senders;
 using Waffle.Core.Services;
 using Waffle.Core.Services.Branches;
@@ -10,11 +12,14 @@ using Waffle.Core.Services.Departments;
 using Waffle.Core.Services.Districts;
 using Waffle.Core.Services.Ecommerces;
 using Waffle.Core.Services.Events;
+using Waffle.Core.Services.JobKinds;
 using Waffle.Core.Services.KeyIn;
 using Waffle.Core.Services.Provinces;
 using Waffle.Core.Services.Teams;
+using Waffle.Core.Services.Tele;
 using Waffle.Data.ContentGenerators;
 using Waffle.Infrastructure.Repositories;
+using Waffle.Infrastructure.Repositories.Tele;
 using Waffle.Services;
 
 namespace Waffle.Extensions;
@@ -67,6 +72,16 @@ public static class ServiceCollectionExtensions
 
         services.AddScoped<ITransportRepository, TransportRepository>();
         services.AddScoped<ITransportService, TransportService>();
+
+        #region Users
+        services.AddScoped<IJobKindRepository, JobKindRepository>();
+        services.AddScoped<IJobKindService, JobKindService>();
+        #endregion
+
+        #region Contacts
+        services.AddScoped<ICallStatusRepository, CallStatusRepository>();
+        services.AddScoped<ICallStatusService, CallStatusService>();
+        #endregion
 
         services.AddScoped<ICurrentUser, CurrentUser>();
 

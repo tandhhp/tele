@@ -27,22 +27,16 @@ public class ContactController(UserManager<ApplicationUser> _userManager,
     ILogService _appLogService, ApplicationDbContext _context, IUserService _userService, IContactService _contactService) : BaseController
 {
     [HttpGet("list")]
-    public async Task<IActionResult> ListAsync([FromQuery] ContactFilterOptions filterOptions) => Ok(await _userService.ListContactAsync(filterOptions));
+    public async Task<IActionResult> ListAsync([FromQuery] ContactFilterOptions filterOptions) => Ok(await _userService.ListAsync(filterOptions));
 
     [HttpGet("{id}")]
     public async Task<IActionResult> GetAsync([FromRoute] Guid id) => Ok(TResult<object>.Ok(await _context.Contacts.FindAsync(id)));
 
-    [HttpPost("delete/{id}")]
+    [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteAsync([FromRoute] Guid id)
     {
         var contact = await _context.Contacts.FindAsync(id);
-        if (contact is null)
-        {
-            return Ok(IdentityResult.Failed(new IdentityError
-            {
-                Description = "Contact not found!"
-            }));
-        }
+        if (contact is null) return BadRequest("Không tìm thấy liên hệ!");
         _context.Contacts.Remove(contact);
         var activities = await _context.ContactActivities.Where(x => x.ContactId == id).ToListAsync();
         if (activities.Any())
@@ -58,36 +52,8 @@ public class ContactController(UserManager<ApplicationUser> _userManager,
         return Ok(IdentityResult.Success);
     }
 
-    [HttpPost("add"), AllowAnonymous]
-    public async Task<IActionResult> AddAsync([FromBody] Contact args)
-    {
-        if (!PhoneNumberValidator.IsValidVietnamPhoneNumber(args.PhoneNumber)) return BadRequest("Số điện thoại không hợp lệ");
-        var contact = await _context.Contacts.FirstOrDefaultAsync(x => x.PhoneNumber == args.PhoneNumber);
-        if (!string.IsNullOrWhiteSpace(args.Email) && await _context.Contacts.AnyAsync(x => x.Email == args.Email)) return BadRequest("Email đã tồn tại");
-        if (contact is null)
-        {
-            args.CreatedDate = DateTime.Now;
-            await _context.Contacts.AddAsync(args);
-        }
-        else
-        {
-            contact.CreatedDate = DateTime.Now;
-            contact.Note = args.Note;
-            contact.Email = args.Email;
-            contact.Name = args.Name;
-            _context.Contacts.Update(contact);
-        }
-        var cx = await (from a in _context.Users
-                        join b in _context.UserRoles on a.Id equals b.UserId
-                        join c in _context.Roles on b.RoleId equals c.Id
-                        where c.Name == RoleName.Cx
-                        select a.Id).ToListAsync();
-
-        await _notificationService.CreateAsync($"Liên hệ mới từ {args.Name} - {args.PhoneNumber}", $"Bạn có một liên hệ mới từ {args.Name} - {args.PhoneNumber} với email {args.Email} và ghi chú: {args.Note}", cx);
-
-        await _context.SaveChangesAsync();
-        return Ok(args);
-    }
+    [HttpPost]
+    public async Task<IActionResult> CreateAsync([FromBody] CreateContactArgs args) => Ok(await _contactService.CreateContactAsync(args));
 
     [HttpGet("activity/list/{id}")]
     public async Task<IActionResult> ListActivityAsync([FromRoute] Guid id)
@@ -683,7 +649,6 @@ public class ContactController(UserManager<ApplicationUser> _userManager,
                             SalesName = _context.Users.First(x => x.Id == a.SalesId).Name,
                             b.TableStatus,
                             b.TableId,
-                            Table = _context.Tables.First(x => x.Id == b.TableId).Name,
                             b.ContractCode,
                             b.AmountPaid,
                             b.ContractAmount,
@@ -1141,7 +1106,7 @@ public class ContactController(UserManager<ApplicationUser> _userManager,
     }
 
     [HttpGet("floor-options")]
-    public async Task<IActionResult> GetFloorOptionsAsync() => Ok(await _context.Tables.Select(x => x.Floor).Distinct().Select(x => new
+    public async Task<IActionResult> GetFloorOptionsAsync() => Ok(await _context.Tables.Distinct().Select(x => new
     {
         label = x,
         value = x
@@ -1154,7 +1119,6 @@ public class ContactController(UserManager<ApplicationUser> _userManager,
         if (user is null) return Unauthorized();
         var tables = await _context.Tables
             .Where(x => x.Active)
-            .Where(x => x.Branch == user.Branch)
         .OrderBy(x => x.SortOrder).AsNoTracking().ToListAsync();
 
         eventDate ??= DateTime.Now;
@@ -1164,7 +1128,7 @@ public class ContactController(UserManager<ApplicationUser> _userManager,
         {
             label = x.Name,
             value = x.Id,
-            disabled = tableStatuses.Any(t => t.TableId == x.Id)
+            disabled = tableStatuses
         }));
     }
 
@@ -1312,8 +1276,6 @@ public class ContactController(UserManager<ApplicationUser> _userManager,
     {
         var query = from a in _context.LeadFeedbacks
                     join b in _context.Leads on a.LeadId equals b.Id
-                    join c in _context.Tables on a.TableId equals c.Id into ac
-                    from c in ac.DefaultIfEmpty()
                     select new
                     {
                         a.InterestLevel,
@@ -1330,7 +1292,6 @@ public class ContactController(UserManager<ApplicationUser> _userManager,
                         a.ContractAmount,
                         a.TableStatus,
                         a.Floor,
-                        TableName = c.Name,
                         b.Name,
                         b.Email,
                         b.PhoneNumber,

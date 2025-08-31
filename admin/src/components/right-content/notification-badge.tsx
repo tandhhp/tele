@@ -9,7 +9,7 @@ const NotificationBadge: React.FC = () => {
 
     return (
         <Badge count={data}>
-            <div className="w-6 h-6 flex items-center justify-center cursor-pointer hover:text-blue-500 transition-colors" onClick={() => history.push('/users/notification')}>
+            <div className="w-6 h-6 flex items-center justify-center cursor-pointer hover:text-blue-500 transition-colors" onClick={() => history.push('/user/notification')}>
                 <BellOutlined className="text-lg" />
             </div>
         </Badge>

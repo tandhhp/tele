@@ -1,16 +1,22 @@
 import { apiTeamUsers } from "@/services/users/team";
 import { LeftOutlined } from "@ant-design/icons";
-import { PageContainer, ProTable } from "@ant-design/pro-components"
+import { ActionType, PageContainer, ProTable } from "@ant-design/pro-components"
 import { useParams, history } from "@umijs/max";
 import { Button } from "antd";
+import TeamAddUserForm from "./components/add";
+import { useRef } from "react";
 
 const Index: React.FC = () => {
 
     const { id } = useParams<{ id: string }>();
+    const actionRef = useRef<ActionType>(null);
 
     return (
         <PageContainer extra={<Button icon={<LeftOutlined />} onClick={() => history.back()}>Quay lại</Button>}>
             <ProTable
+                actionRef={actionRef}
+                rowKey="id"
+                headerTitle={<TeamAddUserForm reload={() => actionRef.current?.reload()} />}
                 request={apiTeamUsers}
                 params={{ teamId: id }}
                 search={{
@@ -22,6 +28,10 @@ const Index: React.FC = () => {
                         valueType: 'indexBorder',
                         width: 30,
                         align: 'center'
+                    },
+                    {
+                        title: 'Tài khoản',
+                        dataIndex: 'userName'
                     },
                     {
                         title: 'Họ tên',

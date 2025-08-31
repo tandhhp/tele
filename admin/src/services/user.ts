@@ -289,3 +289,14 @@ export async function apiLoanPoint(data: any) {
     data
   });
 }
+
+export async function apiUserCreate(data: any) {
+  return request(`user`, {
+    method: 'POST',
+    data
+  });
+}
+
+export async function apiUserOptions(params?: any) {
+  return request(`user/options`, { params });
+}

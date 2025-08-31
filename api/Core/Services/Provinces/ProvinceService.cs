@@ -11,6 +11,7 @@ public class ProvinceService(IProvinceRepository _provinceRepository) : IProvinc
 {
     public async Task<TResult> CreateAsync(ProvinceCreateArgs args)
     {
+        if (string.IsNullOrWhiteSpace(args.Name)) return TResult.Failed("Province name is required.");
         if (await _provinceRepository.ExistsAsync(args.Name)) return TResult.Failed("Province name already exists.");
         await _provinceRepository.AddAsync(new Province { Name = args.Name });
         return TResult.Success;
@@ -30,6 +31,7 @@ public class ProvinceService(IProvinceRepository _provinceRepository) : IProvinc
 
     public async Task<TResult> UpdateAsync(ProvinceUpdateArgs args)
     {
+        if (string.IsNullOrWhiteSpace(args.Name)) return TResult.Failed("Province name is required.");
         var province = await _provinceRepository.FindAsync(args.Id);
         if (province is null) return TResult.Failed("Province not found.");
         province.Name = args.Name;

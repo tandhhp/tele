@@ -1124,26 +1124,7 @@ public class UserController : BaseController
     }
 
     [HttpGet("options")]
-    public async Task<IActionResult> GetOptionsAsync()
-    {
-        var query = from a in _context.Users
-                    join b in _context.UserRoles on a.Id equals b.UserId into ab
-                    from b in ab.DefaultIfEmpty()
-                    where b == null && a.Status == UserStatus.Working
-                    select new
-                    {
-                        label = a.UserName,
-                        value = a.Id,
-                        a.Branch
-                    };
-
-        var user = await _userManager.FindByIdAsync(User.GetId().ToString());
-        if (user is null) return Unauthorized();
-
-        query = query.Where(x => x.Branch == user.Branch);
-
-        return Ok(await query.ToListAsync());
-    }
+    public async Task<IActionResult> GetOptionsAsync([FromQuery] UserSelectOptions selectOptions) => Ok(await _userService.GetOptionsAsync(selectOptions));
 
     [HttpGet("dos/options")]
     public async Task<IActionResult> GetDosOptionsAsync()
@@ -2363,4 +2344,8 @@ public class UserController : BaseController
 
     [HttpPost]
     public async Task<IActionResult> CreateAsync([FromBody] CreateUserArgs args) => Ok(await _userService.CreateAsync(args));
+
+    [HttpGet("married-status-options")]
+    public IActionResult MarriedStatusOptions([FromQuery] SelectOptions selectOptions) => Ok(_userService.MarriedStatusOptions(selectOptions));
+
 }

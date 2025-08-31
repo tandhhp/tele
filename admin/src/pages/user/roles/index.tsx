@@ -32,7 +32,7 @@ const RolePage: React.FC = () => {
             title: 'Chi tiết',
             valueType: 'option',
             render: (dom, entity) => [
-                <Button key="detail" type="primary" size='small' icon={<UserAddOutlined />} onClick={() => history.push(`/users/roles/${entity.name}`)}>Quản lý</Button>
+                <Button key="detail" type="primary" size='small' icon={<UserAddOutlined />} onClick={() => history.push(`/user/roles/${entity.name}`)}>Quản lý</Button>
             ],
             width: 100
         }

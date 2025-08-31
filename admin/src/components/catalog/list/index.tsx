@@ -152,8 +152,7 @@ const CatalogList: React.FC<CatalogListProps> = (props) => {
         request={(params, sort) =>
           listCatalog({
             ...params,
-            type: props.type,
-            locale: getLocale()
+            type: props.type
           }, sort)
         }
         pagination={{

@@ -1,6 +1,7 @@
+import { apiUserCreate } from "@/services/user";
 import { apiTeamOptions } from "@/services/users/team";
 import { DrawerForm, DrawerFormProps, ProFormDatePicker, ProFormInstance, ProFormSelect, ProFormText } from "@ant-design/pro-components"
-import { Col, Row } from "antd";
+import { Col, message, Row } from "antd";
 import { useRef } from "react";
 
 type Props = DrawerFormProps & {
@@ -12,12 +13,29 @@ const UserForm: React.FC<Props> = (props) => {
 
     const formRef = useRef<ProFormInstance>();
 
+    const handleFinish = async (values: any) => {
+        if (props.data) {
+            // Update user
+        } else {
+            await apiUserCreate(values);
+        }
+        message.success("Thao tác thành công");
+        formRef.current?.resetFields();
+        props.reload?.();
+        return true;
+    }
+
     return (
-        <DrawerForm title="Tài khoản" {...props} formRef={formRef}>
-            <ProFormText name="username" label="Tên đăng nhập"
-                rules={[{ required: true, message: "Tên đăng nhập là bắt buộc" }]}
-            />
+        <DrawerForm title="Tài khoản" {...props} formRef={formRef} onFinish={handleFinish}>
             <Row gutter={[16, 16]}>
+                <Col xs={24} md={12}>
+                    <ProFormText name="username" label="Tên đăng nhập"
+                        rules={[{ required: true, message: "Tên đăng nhập là bắt buộc" }]}
+                    />
+                </Col>
+                <Col xs={24} md={12}>
+                    <ProFormText name="name" label="Họ và tên" rules={[{ required: true, message: "Họ và tên là bắt buộc" }]} />
+                </Col>
                 <Col xs={24} md={12}>
                     <ProFormSelect name={`gender`} label="Giới tính" options={[
                         { label: "Nam", value: false },

@@ -32,3 +32,10 @@ export async function apiTeamUsers(params: any) {
 export async function apiTeamOptions() {
     return request('team/options');
 }
+
+export async function apiTeamAddUser(data: any) {
+    return request('team/add-user', {
+        method: 'POST',
+        data
+    });
+}

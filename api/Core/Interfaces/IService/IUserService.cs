@@ -15,8 +15,10 @@ public interface IUserService
     Task<IdentityResult> AddToRoleAsync(AddToRoleModel model);
     Task<dynamic> GetUsersInRoleAsync(string roleName, UserFilterOptions filterOptions);
     Task<IdentityResult> RemoveFromRoleAsync(RemoveFromRoleModel args);
-    Task<ListResult<dynamic>> ListContactAsync(ContactFilterOptions filterOptions);
+    Task<ListResult<dynamic>> ListAsync(ContactFilterOptions filterOptions);
     Task SendEmailToCardHolderAsync(CreateUserModel user);
     Task<ListResult<object>> PointsAsync(UserPointFilterOptions filterOptions);
     Task<TResult> CreateAsync(CreateUserArgs args);
+    Task<object?> GetOptionsAsync(UserSelectOptions selectOptions);
+    object? MarriedStatusOptions(SelectOptions selectOptions);
 }

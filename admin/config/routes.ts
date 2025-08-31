@@ -228,7 +228,6 @@ export default [
     name: 'Nội dung',
     path: '/catalog',
     icon: 'SlackOutlined',
-    access: 'canCX',
     routes: [
       {
         name: 'Chăm sóc sức khỏe',
@@ -296,117 +295,91 @@ export default [
     icon: 'ShoppingCartOutlined',
     name: 'Đơn đăng ký',
     path: '/form',
-    component: './tour/forms',
-    access: 'canForm'
+    component: './tour/forms'
   },
   {
     icon: 'TeamOutlined',
     name: 'Người dùng',
-    path: '/users',
+    path: '/user',
     routes: [
       {
         name: 'Chủ thẻ',
-        path: '/users/member',
-        component: './users/member',
-        access: 'canCardHolder'
+        path: '/user/member',
+        component: './user/member'
       },
       {
         name: 'Hồ sơ',
-        path: '/users/profile',
-        component: './users/profile',
+        path: '/user/profile',
+        component: './user/profile',
         hideInMenu: true,
       },
       {
         name: 'Bảo mật',
-        path: '/users/center/:id',
-        component: './users/center',
+        path: '/user/setting',
+        component: './user/setting',
         hideInMenu: true,
       },
       {
         name: 'Hoạt động',
-        path: '/users/contact/activity/:id',
-        component: './users/contact/activity',
+        path: '/user/contact/center/:id',
+        component: './user/contact/center',
         hideInMenu: true
       },
       {
         name: 'Nhân viên',
-        path: '/users/roles',
-        component: './users/roles',
-        access: 'canHR',
+        path: '/user/roles',
+        component: './user/roles'
       },
       {
         name: 'Chức vụ',
-        path: '/users/roles/:id',
-        component: './users/roles/center',
+        path: '/user/roles/:id',
+        component: './user/roles/center',
         hideInMenu: true
       },
       {
         name: 'Liên hệ',
-        path: '/users/contact',
-        component: './users/contact',
-        access: 'canCX',
+        path: '/user/contact',
+        component: './user/contact'
       },
       {
         name: 'Thay đổi nhân sự',
-        path: '/users/changes',
-        component: './users/changes',
-        access: 'canUserChange'
+        path: '/user/changes',
+        component: './user/changes'
       },
       {
         name: 'Thông báo',
-        path: '/users/notification',
+        path: '/user/notification',
         component: './notification',
         hideInMenu: true
       },
       {
         name: 'Blacklist',
-        path: '/users/blacklist',
-        component: './users/contact/blacklist'
+        path: '/user/blacklist',
+        component: './user/contact/blacklist'
       },
       {
         name: 'Phòng - Ban',
-        path: '/users/department',
+        path: '/user/department',
         component: './department'
       },
       {
-        name: 'Nhóm',
-        path: '/users/department/team/:id',
+        name: 'Team',
+        path: '/user/department/team/:id',
         component: './department/team',
         hideInMenu: true
       },
       {
-        name: 'Thành viên trong nhóm',
-        path: '/users/department/team/user/:id',
-        component: './users/team/user',
+        name: 'Thành viên',
+        path: '/user/department/team/user/:id',
+        component: './user/team/user',
         hideInMenu: true
       },
       {
         name: 'Tài khoản',
-        path: '/users/account',
-        component: './users'
+        path: '/user/account',
+        component: './user'
       }
     ],
-  },
-  {
-    icon: 'CalculatorOutlined',
-    name: 'Duyệt Top-Up / Công nợ',
-    path: '/users/top-up',
-    component: './top-up',
-    access: 'canDosAccountant',
-  },
-  {
-    icon: 'UserSwitchOutlined',
-    name: 'Chuyển đổi khách hàng',
-    path: '/card-holder-queue',
-    component: './users/queue',
-    access: 'canCardHolderQueue'
-  },
-  {
-    icon: 'UsergroupAddOutlined',
-    name: 'Khách hàng tiềm năng',
-    path: '/lead',
-    component: './users/lead',
-    access: 'canLead',
   },
   {
     icon: 'AccountBookOutlined',
@@ -414,11 +387,6 @@ export default [
     path: '/accountant',
     access: 'canAccountant',
     routes: [
-      {
-        name: 'Duyệt điểm',
-        path: '/accountant/loyalty',
-        component: './users/loyalty'
-      },
       {
         name: 'Công nợ sự kiện',
         path: '/accountant/event',
@@ -479,12 +447,6 @@ export default [
         component: './settings'
       },
       {
-        name: 'Thẻ',
-        path: '/settings/card',
-        component: './users/card',
-        access: 'canAdmin',
-      },
-      {
         name: 'component',
         path: '/settings/component',
         component: './settings/components',
@@ -497,54 +459,6 @@ export default [
         hideInMenu: true,
       },
       {
-        name: 'google',
-        path: '/settings/google/:id',
-        component: './settings/google',
-        hideInMenu: true,
-      },
-      {
-        name: 'footer',
-        path: '/settings/footer/:id',
-        component: './settings/footer',
-        hideInMenu: true,
-      },
-      {
-        name: 'header',
-        path: '/settings/header/:id',
-        component: './settings/header',
-        hideInMenu: true,
-      },
-      {
-        name: 'style',
-        path: '/settings/css',
-        component: './settings/css',
-        hideInMenu: true,
-      },
-      {
-        name: 'telegram',
-        path: '/settings/telegram/:id',
-        component: './settings/telegram',
-        hideInMenu: true,
-      },
-      {
-        name: 'sendGrid',
-        path: '/settings/sendgrid/:id',
-        component: './settings/sendgrid',
-        hideInMenu: true,
-      },
-      {
-        name: 'facebook',
-        path: '/settings/facebook/:id',
-        component: './settings/facebook',
-        hideInMenu: true,
-      },
-      {
-        name: 'social',
-        path: '/settings/social/:id',
-        component: './settings/social',
-        hideInMenu: true,
-      },
-      {
         name: 'Tỉnh/Thành phố',
         path: '/settings/province',
         component: './settings/province'
@@ -554,6 +468,11 @@ export default [
         path: '/settings/province/district/:id',
         component: './settings/province/district',
         hideInMenu: true,
+      },
+      {
+        name: 'Nghề nghiệp',
+        path: '/settings/job-kind',
+        component: './settings/job-kind'
       }
     ],
   },
@@ -561,7 +480,6 @@ export default [
     icon: 'CalendarOutlined',
     name: 'Sự kiện',
     path: '/event',
-    access: 'canEvent',
     routes: [
       {
         name: 'Sự kiện 09:00',
@@ -582,8 +500,7 @@ export default [
       {
         name: 'Feedback',
         path: '/event/feedback',
-        component: './event/feedback',
-        access: 'canAdmin'
+        component: './event/feedback'
       },
       {
         name: 'Key-In của tôi',
@@ -593,8 +510,7 @@ export default [
       {
         name: 'Công nợ',
         path: '/event/debt',
-        component: './event/debt',
-        access: 'event'
+        component: './event/debt'
       }
     ]
   },
@@ -602,7 +518,6 @@ export default [
     name: 'Người tham dự',
     path: '/event/user/:id',
     component: './event/user',
-    access: 'canCX',
     hideInMenu: true
   },
   {

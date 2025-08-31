@@ -1,14 +1,16 @@
-﻿namespace Waffle.Entities.Contacts;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
-public class Table
+namespace Waffle.Entities.Contacts;
+
+public class Table : BaseEntity<int>
 {
-    public Guid Id { get; set; }
+    [StringLength(256)]
     public string Name { get; set; } = default!;
-    public string Floor { get; set; } = default!;
-    public bool? Available { get; set; }
+    [ForeignKey(nameof(Room))]
+    public int RoomId { get; set; }
     public bool Active { get; set; }
     public int SortOrder { get; set; }
-    public Branch1? Branch { get; set; }
 
-    public List<LeadFeedback>? LeadFeedbacks { get; set; }
+    public virtual Room? Room { get; set; }
 }

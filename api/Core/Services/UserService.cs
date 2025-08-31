@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using System.Net;
 using Waffle.Core.Constants;
+using Waffle.Core.Helpers;
 using Waffle.Core.Interfaces;
 using Waffle.Core.Interfaces.IService;
 using Waffle.Data;
@@ -15,7 +16,7 @@ using Waffle.Models.ViewModels.Users;
 
 namespace Waffle.Core.Services;
 
-public class UserService(UserManager<ApplicationUser> _userManager, RoleManager<ApplicationRole> _roleManager, ApplicationDbContext _context, ICurrentUser currentUser) : IUserService
+public class UserService(UserManager<ApplicationUser> _userManager, RoleManager<ApplicationRole> _roleManager, ApplicationDbContext _context, ICurrentUser currentUser, ITeamService _teamService) : IUserService
 {
     private readonly ICurrentUser _currentUser = currentUser;
 
@@ -328,9 +329,10 @@ Thông tin liên hệ của Bộ phận <b><i>Trải Nghiệm Khách Hàng</i></
         };
     }
 
-    public async Task<ListResult<dynamic>> ListContactAsync(ContactFilterOptions filterOptions)
+    public async Task<ListResult<dynamic>> ListAsync(ContactFilterOptions filterOptions)
     {
         var query = from a in _context.Contacts
+                    join b in _context.Users on a.UserId equals b.Id into ab from b in ab.DefaultIfEmpty()
                     where a.Status != ContactStatus.Blacklisted
                     select new
                     {
@@ -339,7 +341,10 @@ Thông tin liên hệ của Bộ phận <b><i>Trải Nghiệm Khách Hàng</i></
                         a.Email,
                         a.CreatedDate,
                         a.Name,
-                        a.Note
+                        a.Note,
+                        a.Gender,
+                        a.UserId,
+                        b.UserName
                     };
         if (!string.IsNullOrWhiteSpace(filterOptions.PhoneNumber))
         {
@@ -388,6 +393,11 @@ Thông tin liên hệ của Bộ phận <b><i>Trải Nghiệm Khách Hàng</i></
 
     public async Task<TResult> CreateAsync(CreateUserArgs args)
     {
+        if (args.TeamId != null)
+        {
+            var team = await _teamService.GetAsync(args.TeamId.GetValueOrDefault());
+            if (team.Data is null) return TResult.Failed("Team not found");
+        }
         await _userManager.CreateAsync(new ApplicationUser
         {
             UserName = args.UserName,
@@ -395,8 +405,43 @@ Thông tin liên hệ của Bộ phận <b><i>Trải Nghiệm Khách Hàng</i></
             CreatedDate = DateTime.Now,
             Status = UserStatus.Working,
             Name = args.Name,
-            PhoneNumber = args.PhoneNumber
+            PhoneNumber = args.PhoneNumber,
+            TeamId = args.TeamId
         }, args.Password);
         return TResult.Success;
+    }
+
+    public async Task<object?> GetOptionsAsync(UserSelectOptions selectOptions)
+    {
+        var query = from u in _context.Users
+                    where u.Status == UserStatus.Working
+                    select new
+                    {
+                        u.Id,
+                        u.UserName,
+                        u.TeamId
+                    };
+        if (selectOptions.TeamId != null)
+        {
+            query = query.Where(x => x.TeamId == selectOptions.TeamId);
+        }
+        if (!string.IsNullOrWhiteSpace(selectOptions.KeyWords))
+        {
+            query = query.Where(x => x.UserName != null && x.UserName.Contains(selectOptions.KeyWords, StringComparison.CurrentCultureIgnoreCase));
+        }
+        return await query.Select(x => new
+        {
+            Label = x.UserName,
+            Value = x.Id
+        }).ToListAsync();
+    }
+
+    public object? MarriedStatusOptions(SelectOptions selectOptions)
+    {
+        return Enum.GetValues(typeof(MarriedStatus)).Cast<MarriedStatus>().Select(x => new
+        {
+            Label = EnumHelper.GetDisplayName(x),
+            Value = x
+        }).ToList();
     }
 }

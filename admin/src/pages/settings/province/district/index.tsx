@@ -1,8 +1,8 @@
 import { apiDistrictList } from "@/services/settings/district";
-import { LeftOutlined, PlusOutlined } from "@ant-design/icons";
+import { DeleteOutlined, LeftOutlined, PlusOutlined, SettingOutlined } from "@ant-design/icons";
 import { ActionType, PageContainer, ProTable } from "@ant-design/pro-components"
 import { history } from "@umijs/max";
-import { Button } from "antd";
+import { Button, Popconfirm } from "antd";
 import DistrictForm from "./components/form";
 import { useRef, useState } from "react";
 
@@ -26,6 +26,16 @@ const Index: React.FC = () => {
                     {
                         title: 'Xã / Phường',
                         dataIndex: 'name'
+                    },
+                    {
+                        title: <SettingOutlined />,
+                        valueType: 'option',
+                        render: (dom, entity) => [
+                            <Popconfirm key={`delete`} title="Xác nhận xóa?">
+                                <Button icon={<DeleteOutlined />} size="small" type="primary" danger />
+                            </Popconfirm>
+                        ],
+                        width: 60
                     }
                 ]}
                 search={{

@@ -1,6 +1,6 @@
 import { apiUserList } from "@/services/user";
 import { apiTeamOptions } from "@/services/users/team";
-import { MoreOutlined, SettingOutlined, UserAddOutlined } from "@ant-design/icons";
+import { ManOutlined, MoreOutlined, SettingOutlined, UserAddOutlined, WomanOutlined } from "@ant-design/icons";
 import { ActionType, PageContainer, ProTable } from "@ant-design/pro-components"
 import { Button, Dropdown } from "antd";
 import { useRef, useState } from "react";
@@ -27,8 +27,18 @@ const Index: React.FC = () => {
                         align: 'center'
                     },
                     {
+                        title: 'Tài khoản',
+                        dataIndex: 'userName',
+                    },
+                    {
                         title: 'Họ và tên',
-                        dataIndex: 'name'
+                        dataIndex: 'name',
+                        render: (text, record) => {
+                            if (record.gender) {
+                                return <><WomanOutlined className="text-pink-500" /> {text}</>
+                            }
+                            return <><ManOutlined className="text-blue-500" /> {text}</>
+                        }
                     },
                     {
                         title: 'Ngày sinh',

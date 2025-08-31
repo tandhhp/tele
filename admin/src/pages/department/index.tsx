@@ -96,7 +96,7 @@ const Index: React.FC = () => {
                                         key: 'team',
                                         label: 'Quản lý nhóm',
                                         onClick: () => {
-                                            history.push(`/users/department/team/${record.id}`);
+                                            history.push(`/user/department/team/${record.id}`);
                                         },
                                         icon: <UsergroupAddOutlined />
                                     }

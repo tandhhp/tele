@@ -202,3 +202,17 @@ export async function apiContactBlock(data: any) {
 export async function apiContactBlacklist(params: any) {
   return request(`contact/blacklist`, { params });
 }
+
+export async function apiContactCreate(data: any) {
+  return request(`contact`, {
+    method: 'POST',
+    data
+  })
+}
+
+export async function apiContactUpdate(data: any) {
+  return request(`contact`, {
+    method: 'PUT',
+    data
+  })
+}

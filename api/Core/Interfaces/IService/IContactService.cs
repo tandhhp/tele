@@ -6,5 +6,6 @@ namespace Waffle.Core.Interfaces.IService;
 public interface IContactService
 {
     Task<TResult> BlockAsync(BlockContactArgs args);
+    Task<TResult> CreateContactAsync(CreateContactArgs args);
     public Task<ListResult<object>> GetBlacklistAsync(BlacklistFilterOptions filterOptions);
 }

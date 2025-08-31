@@ -25,7 +25,7 @@ public class DistrictRepository(ApplicationDbContext context) : EfRepository<Dis
         }
         if (!string.IsNullOrWhiteSpace(filterOptions.Name))
         {
-            query = query.Where(d => d.Name.Contains(filterOptions.Name));
+            query = query.Where(d => d.Name.ToLower().Contains(filterOptions.Name.ToLower()));
         }
         query = query.OrderBy(d => d.Name);
         return await ListResult<object>.Success(query, filterOptions);

@@ -5,5 +5,5 @@ namespace Waffle.Core.Interfaces.IRepository.Tele;
 
 public interface ICallStatusRepository : IAsyncRepository<CallStatus>
 {
-    Task<object> OptionsAsync(SelectOptions? options);
+    Task<object> OptionsAsync(SelectOptions options);
 }

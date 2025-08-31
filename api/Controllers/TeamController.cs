@@ -2,6 +2,7 @@
 using Waffle.Core.Foundations;
 using Waffle.Core.Interfaces.IService;
 using Waffle.Core.Services.Teams.Models;
+using Waffle.Models.Users.Teams;
 
 namespace Waffle.Controllers;
 
@@ -27,4 +28,10 @@ public class TeamController(ITeamService TeamService) : BaseController
 
     [HttpGet("{id}")]
     public async Task<IActionResult> GetAsync([FromRoute] int id) => Ok(await TeamService.GetAsync(id));
+
+    [HttpPost("add-user")]
+    public async Task<IActionResult> AddUserAsync([FromBody] AddUserToTeamArgs args) => Ok(await TeamService.AddUserAsync(args));
+
+    [HttpDelete("remove-user")]
+    public async Task<IActionResult> RemoveUserAsync([FromBody] RemoveUserFromTeamArgs args) => Ok(await TeamService.RemoveUserAsync(args));
 }

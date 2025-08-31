@@ -7,4 +7,5 @@ namespace Waffle.Core.Interfaces.IRepository;
 public interface IContactRepository : IAsyncRepository<Contact>
 {
     Task<ListResult<object>> GetBlacklistAsync(BlacklistFilterOptions filterOptions);
+    Task<bool> IsPhoneExistAsync(string phoneNumber);
 }

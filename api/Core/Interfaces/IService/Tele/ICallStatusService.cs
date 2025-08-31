@@ -5,5 +5,5 @@ namespace Waffle.Core.Interfaces.IService.Tele;
 
 public interface ICallStatusService
 {
-    Task<object> OptionsAsync(SelectOptions? options);
+    Task<object> OptionsAsync(SelectOptions options);
 }

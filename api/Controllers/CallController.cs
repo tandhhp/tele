@@ -8,5 +8,5 @@ namespace Waffle.Controllers;
 public class CallController(ICallStatusService _callStatusService) : BaseController
 {
     [HttpGet("status/options")]
-    public async Task<IActionResult> StatusOptionsAsync([FromQuery] SelectOptions? options) => Ok(await _callStatusService.OptionsAsync(options));
+    public async Task<IActionResult> StatusOptionsAsync([FromQuery] SelectOptions options) => Ok(await _callStatusService.OptionsAsync(options));
 }

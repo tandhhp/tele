@@ -6,11 +6,23 @@ using Waffle.Core.Services.Teams.Models;
 using Waffle.Entities;
 using Waffle.Entities.Users;
 using Waffle.Models;
+using Waffle.Models.Users.Teams;
 
 namespace Waffle.Core.Services.Teams;
 
 public class TeamService(ITeamRepository _teamRepository, IDepartmentService _departmentService, UserManager<ApplicationUser> _userManager) : ITeamService
 {
+    public async Task<TResult> AddUserAsync(AddUserToTeamArgs args)
+    {
+        var user = await _userManager.FindByIdAsync(args.UserId.ToString());
+        if (user is null) return TResult.Failed("Không tìm thấy người dùng!");
+        var team = await _teamRepository.FindAsync(args.TeamId);
+        if (team is null) return TResult.Failed("Không tìm thấy nhóm!");
+        user.TeamId = team.Id;
+        await _userManager.UpdateAsync(user);
+        return TResult.Success;
+    }
+
     public async Task<TResult> CreateAsync(CreateTeamArgs args)
     {
         var department = await _departmentService.FindAsync(args.DepartmentId);
@@ -53,6 +65,18 @@ public class TeamService(ITeamRepository _teamRepository, IDepartmentService _de
     public Task<ListResult<object>> ListAsync(TeamFilterOptions filterOptions) => _teamRepository.ListAsync(filterOptions);
 
     public Task<object?> OptionsAsync(TeamSelectOptions selectOptions) => _teamRepository.OptionsAsync(selectOptions);
+
+    public async Task<TResult> RemoveUserAsync(RemoveUserFromTeamArgs args)
+    {
+        var user = await _userManager.FindByIdAsync(args.UserId.ToString());
+        if (user is null) return TResult.Failed("Không tìm thấy người dùng!");
+        var team = await _teamRepository.FindAsync(args.TeamId);
+        if (team is null) return TResult.Failed("Không tìm thấy nhóm!");
+        if (user.TeamId != team.Id) return TResult.Failed("Người dùng không thuộc nhóm này!");
+        user.TeamId = null;
+        await _userManager.UpdateAsync(user);
+        return TResult.Success;
+    }
 
     public async Task<TResult> UpdateAsync(UpdateTeamArgs args)
     {

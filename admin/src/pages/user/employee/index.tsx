@@ -75,7 +75,7 @@ const EmployeePage: React.FC = () => {
             icon={<EyeOutlined />}
             size='small'
             onClick={() => {
-              history.push(`/users/member/${entity.id}`);
+              history.push(`/user/member/${entity.id}`);
             }}
           />
         </Tooltip>,

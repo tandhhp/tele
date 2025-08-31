@@ -1,5 +1,6 @@
 import { apiDistrictCreate, apiDistrictUpdate } from "@/services/settings/district";
 import { ModalForm, ModalFormProps, ProFormInstance, ProFormText } from "@ant-design/pro-components"
+import { useParams } from "@umijs/max";
 import { message } from "antd";
 import { useEffect, useRef } from "react";
 
@@ -10,6 +11,7 @@ type Props = ModalFormProps & {
 
 const DistrictForm: React.FC<Props> = (props) => {
 
+    const { id } = useParams();
     const formRef = useRef<ProFormInstance>();
 
     useEffect(() => {
@@ -19,6 +21,11 @@ const DistrictForm: React.FC<Props> = (props) => {
     }, [props.data, props.open]);
 
     const onFinish = async (values: any) => {
+        if (!id) {
+            message.error('Không xác định được tỉnh/thành phố');
+            return false;
+        }
+        values.provinceId = id;
         if (props.data) {
             values.id = props.data.id;
             await apiDistrictUpdate(values);
@@ -27,6 +34,7 @@ const DistrictForm: React.FC<Props> = (props) => {
             await apiDistrictCreate(values);
         }
         message.success('Thành công');
+        formRef.current?.resetFields();
         props.reload?.();
         return true;
     }

@@ -1,4 +1,5 @@
-﻿using Waffle.Core.Foundations;
+﻿using Microsoft.EntityFrameworkCore;
+using Waffle.Core.Foundations;
 using Waffle.Core.Interfaces.IRepository;
 using Waffle.Core.Services.Contacts.Models;
 using Waffle.Data;
@@ -35,4 +36,6 @@ public class ContactRepository(ApplicationDbContext context) : EfRepository<Cont
         query = query.OrderByDescending(c => c.CreatedDate);
         return await ListResult<object>.Success(query, filterOptions);
     }
+
+    public Task<bool> IsPhoneExistAsync(string phoneNumber) => _context.Contacts.AnyAsync(x => x.PhoneNumber == phoneNumber);
 }

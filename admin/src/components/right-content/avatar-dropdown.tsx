@@ -61,8 +61,8 @@ export const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({ menu }) => {
         loginOut();
         return;
       }
-      if (key === 'settings') {
-        history.push(`/users/center/${initialState?.currentUser?.id}`);
+      if (key === 'setting') {
+        history.push(`/user/setting`);
         return;
       }
       if (key === 'calendar') {
@@ -70,7 +70,7 @@ export const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({ menu }) => {
         return;
       }
       if (key === 'profile') {
-        history.push(`/users/profile`);
+        history.push(`/user/profile`);
         return;
       }
       history.push(`/accounts/${key}`);
@@ -110,7 +110,7 @@ export const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({ menu }) => {
       label: 'Lịch làm việc'
     },
     {
-      key: 'settings',
+      key: 'setting',
       icon: <SettingOutlined />,
       label: 'Cài đặt',
     },

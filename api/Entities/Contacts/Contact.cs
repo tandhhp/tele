@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 using Waffle.Entities.Users;
 
 namespace Waffle.Entities.Contacts;
@@ -27,15 +28,23 @@ public class Contact : AuditEntity
     [ForeignKey(nameof(JobKind))]
     public int? JobKindId { get; set; }
 
+    /// <summary>
+    /// <see cref="ContactMeta"/>
+    /// </summary>
+    public string? MetaData { get; set; }
+
     public virtual Transport? Transport { get; set; }
     public virtual District? District { get; set; }
     public virtual JobKind? JobKind { get; set; }
-    public List<ContactActivity>? Activities { get; set; }
+    public virtual ICollection<ContactActivity>? Activities { get; set; }
+    public virtual ICollection<CallHistory>? CallHistories { get; set; }
 }
 
 public enum ContactStatus
 {
+    [Display(Name = "Mới")]
     New,
+    [Display(Name = "Danh sách đen")]
     Blacklisted
 }
 
@@ -53,9 +62,20 @@ public enum MarriedStatus
 
 public class ContactMeta
 {
-    public ContactMeta()
-    {
-        ErrorMessage = string.Empty;
-    }
-    public string ErrorMessage { get; set; }
+    [JsonPropertyName("age")]
+    public string? Age { get; set; }
+    [JsonPropertyName("jobTitle")]
+    public string? JobTitle { get; set; }
+    [JsonPropertyName("spouseName")]
+    public string? SpouseName { get; set; }
+    [JsonPropertyName("spousePhone")]
+    public string? SpousePhone { get; set; }
+    [JsonPropertyName("salaryRange")]
+    public string? SalaryRange { get; set; }
+    [JsonPropertyName("company")]
+    public string? CompanyName { get; set; }
+    [JsonPropertyName("companyAddress")]
+    public string? CompanyAddress { get; set; }
+    [JsonPropertyName("childrenCount")]
+    public int? ChildrenCount { get; set; }
 }
