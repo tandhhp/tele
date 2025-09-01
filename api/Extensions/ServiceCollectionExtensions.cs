@@ -18,6 +18,7 @@ using Waffle.Core.Services.JobKinds;
 using Waffle.Core.Services.KeyIn;
 using Waffle.Core.Services.Provinces;
 using Waffle.Core.Services.Rooms;
+using Waffle.Core.Services.Tables;
 using Waffle.Core.Services.Teams;
 using Waffle.Core.Services.Tele;
 using Waffle.Data.ContentGenerators;
@@ -63,6 +64,8 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IEventService, EventService>();
         services.AddScoped<IRoomRepository, RoomRepository>();
         services.AddScoped<IRoomService, RoomService>();
+        services.AddScoped<ITableRepository, TableRepository>();
+        services.AddScoped<ITableService, TableService>();
 
         services.AddScoped<IKeyInService, KeyInService>();
         services.AddScoped<ILoanService, LoanService>();

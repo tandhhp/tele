@@ -8,4 +8,5 @@ public class EventCreateArgs
     public DateTime StartDate { get; set; }
     public EventStatus Status { get; set; }
     public TimeSpan StartTime { get; set; }
+    public int RoomId { get; set; }
 }

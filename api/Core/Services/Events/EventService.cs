@@ -13,7 +13,7 @@ using Waffle.Models;
 
 namespace Waffle.Core.Services.Events;
 
-public class EventService(ApplicationDbContext _context, IEventRepository _eventRepository, ILogService _logService, ICurrentUser _currentUser, UserManager<ApplicationUser> _userManager, IWebHostEnvironment webHostEnvironment) : IEventService
+public class EventService(ApplicationDbContext _context, IEventRepository _eventRepository, ILogService _logService, IRoomService _roomService, ICurrentUser _currentUser, UserManager<ApplicationUser> _userManager, IWebHostEnvironment webHostEnvironment) : IEventService
 {
     private readonly IWebHostEnvironment _webHostEnvironment = webHostEnvironment;
 
@@ -93,13 +93,16 @@ public class EventService(ApplicationDbContext _context, IEventRepository _event
     {
         try
         {
+            var room = await _roomService.FindAsync(args.RoomId);
+            if (room is null) return TResult.Failed("Phòng không tồn tại!");
             await _eventRepository.AddAsync(new Event
             {
                 Name = args.Name,
                 StartDate = args.StartDate.Date.Add(args.StartTime),
                 CreatedBy = _currentUser.GetId(),
                 CreatedDate = DateTime.Now,
-                Status = args.Status
+                Status = args.Status,
+                RoomId = room.Id
             });
             return TResult.Success;
         }
@@ -249,11 +252,14 @@ public class EventService(ApplicationDbContext _context, IEventRepository _event
     {
         var data = await _eventRepository.FindAsync(args.Id);
         if (data is null) return TResult.Failed("Sự kiện không tồn tại!");
+        var room = await _roomService.FindAsync(args.RoomId);
+        if (room is null) return TResult.Failed("Phòng không tồn tại!");
         data.Name = args.Name;
         data.ModifiedBy = _currentUser.GetId();
         data.ModifiedDate = DateTime.Now;
         data.StartDate = args.StartDate.Date.Add(args.StartTime);
         data.Status = args.Status;
+        data.RoomId = room.Id;
         await _eventRepository.UpdateAsync(data);
         return TResult.Success;
     }

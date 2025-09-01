@@ -13,4 +13,5 @@ public class Room : AuditEntity<int>
 
     public virtual District? District { get; set; }
     public virtual ICollection<Table>? Tables { get; set; }
+    public virtual ICollection<Event>? Events { get; set; }
 }
