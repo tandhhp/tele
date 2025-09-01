@@ -2,23 +2,14 @@
 using Microsoft.AspNetCore.Mvc;
 using Waffle.Core.Constants;
 using Waffle.Core.Foundations;
-using Waffle.Core.Interfaces.IService;
+using Waffle.Core.Interfaces.IService.Events;
 using Waffle.Core.Services.Events.Models;
 using Waffle.Data;
-using Waffle.Models;
 
 namespace Waffle.Controllers;
 
-public class EventController : BaseController
+public class EventController(IEventService _eventService) : BaseController
 {
-    private readonly IEventService _eventService;
-    private readonly ApplicationDbContext _context;
-    public EventController(IEventService eventService, ApplicationDbContext context)
-    {
-        _eventService = eventService;
-        _context = context;
-    }
-
     [HttpPost("add-sale-revenue")]
     public async Task<IActionResult> AddSaleRevenueAsync([FromForm] AddSaleRevenue args)
     {
@@ -45,4 +36,16 @@ public class EventController : BaseController
 
     [HttpGet("revenue-history")]
     public async Task<IActionResult> RevenueHistoriesAsync([FromQuery] KeyInRevenueFilterOptions filterOptions) => Ok(await _eventService.RevenueHistoriesAsync(filterOptions));
+
+    [HttpPost]
+    public async Task<IActionResult> CreateAsync([FromBody] EventCreateArgs args) => Ok(await _eventService.CreateAsync(args));
+
+    [HttpPut]
+    public async Task<IActionResult> UpdateAsync([FromBody] EventUpdateArgs args) => Ok(await _eventService.UpdateAsync(args));
+
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeleteAsync(int id) => Ok(await _eventService.DeleteAsync(id));
+
+    [HttpGet("list")]
+    public async Task<IActionResult> GetListAsync([FromQuery] EventFilterOptions filterOptions) => Ok(await _eventService.GetListAsync(filterOptions));
 }

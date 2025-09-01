@@ -28,3 +28,29 @@ export async function apiTopupKeyIn(data: any) {
         },
     });
 }
+
+export async function apiEventAdd(data: any) {
+    return request(`event`, {
+        method: 'POST',
+        data
+    });
+}
+
+export async function apiEventUpdate(data: any) {
+    return request(`event`, {
+        method: 'PUT',
+        data
+    });
+}
+
+export async function apiEventDelete(id: number) {
+    return request(`event/${id}`, {
+        method: 'DELETE'
+    });
+}
+
+export async function apiEventList(params: any) {
+    return request(`event/list`, {
+        params
+    });
+}

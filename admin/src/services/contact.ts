@@ -24,17 +24,7 @@ export const apiContactActivityUpdate = (data: any) => request(`contact/activity
 
 export const apiContactActivityDelete = (id?: string) => request(`contact/activity/delete/${id}`, {
   method: 'POST'
-}) 
-
-export const apiAddEvent = (data: any) => request(`contact/event/add`, {
-  method: 'POST',
-  data
-}) 
-
-export const apiUpdateEvent = (data: any) => request(`contact/event/update`, {
-  method: 'POST',
-  data
-}) 
+});
 
 export const apiLeadOption = (params: any) => request(`contact/lead-options`, { params });
 
@@ -215,4 +205,8 @@ export async function apiContactUpdate(data: any) {
     method: 'PUT',
     data
   })
+}
+
+export async function apiContactStatistics() {
+  return request(`contact/statistics`);
 }

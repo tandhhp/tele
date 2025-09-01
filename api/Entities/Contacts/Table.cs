@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Waffle.Entities.Contacts;
 
-public class Table : BaseEntity<int>
+public class Table : AuditEntity<int>
 {
     [StringLength(256)]
     public string Name { get; set; } = default!;

@@ -1,11 +1,19 @@
-﻿namespace Waffle.Entities;
+﻿using System.ComponentModel.DataAnnotations;
 
-public class Event
+namespace Waffle.Entities;
+
+public class Event : AuditEntity<int>
 {
-    public Guid Id { get; set; }
+    [StringLength(512)]
     public string Name { get; set; } = default!;
-    public string Time { get; set; } = default!;
     public DateTime StartDate { get; set; }
+    public EventStatus Status { get; set; }
+}
 
-    public List<Lead>? Leads { get; set; }
+public enum EventStatus
+{
+    Planned,
+    Active,
+    Completed,
+    Cancelled
 }

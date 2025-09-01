@@ -2,7 +2,9 @@
 using Microsoft.EntityFrameworkCore;
 using Waffle.Core.Constants;
 using Waffle.Core.Interfaces;
+using Waffle.Core.Interfaces.IRepository.Events;
 using Waffle.Core.Interfaces.IService;
+using Waffle.Core.Interfaces.IService.Events;
 using Waffle.Core.Services.Events.Models;
 using Waffle.Data;
 using Waffle.Entities;
@@ -11,22 +13,9 @@ using Waffle.Models;
 
 namespace Waffle.Core.Services.Events;
 
-public class EventService : IEventService
+public class EventService(ApplicationDbContext _context, IEventRepository _eventRepository, ILogService _logService, ICurrentUser _currentUser, UserManager<ApplicationUser> _userManager, IWebHostEnvironment webHostEnvironment) : IEventService
 {
-    private readonly ApplicationDbContext _context;
-    private readonly ILogService _logService;
-    private readonly ICurrentUser _currentUser;
-    private readonly UserManager<ApplicationUser> _userManager;
-    private readonly IWebHostEnvironment _webHostEnvironment;
-
-    public EventService(ApplicationDbContext context, ILogService logService, ICurrentUser currentUser, UserManager<ApplicationUser> userManager, IWebHostEnvironment webHostEnvironment)
-    {
-        _context = context;
-        _logService = logService;
-        _currentUser = currentUser;
-        _userManager = userManager;
-        _webHostEnvironment = webHostEnvironment;
-    }
+    private readonly IWebHostEnvironment _webHostEnvironment = webHostEnvironment;
 
     public async Task<TResult> AddSaleRevenueAsync(AddSaleRevenue args)
     {
@@ -100,6 +89,35 @@ public class EventService : IEventService
         return TResult.Success;
     }
 
+    public async Task<TResult> CreateAsync(EventCreateArgs args)
+    {
+        try
+        {
+            await _eventRepository.AddAsync(new Event
+            {
+                Name = args.Name,
+                StartDate = args.StartDate.Date.Add(args.StartTime),
+                CreatedBy = _currentUser.GetId(),
+                CreatedDate = DateTime.Now,
+                Status = args.Status
+            });
+            return TResult.Success;
+        }
+        catch (Exception ex)
+        {
+            await _logService.ExceptionAsync(ex);
+            return TResult.Failed(ex.ToString());
+        }
+    }
+
+    public async Task<TResult> DeleteAsync(int id)
+    {
+        var data = await _eventRepository.FindAsync(id);
+        if (data is null) return TResult.Failed("Sự kiện không tồn tại!");
+        await _eventRepository.DeleteAsync(data);
+        return TResult.Success;
+    }
+
     public async Task<TResult> DeleteSaleRevenueAsync(Lead lead)
     {
         var topup = await _context.UserTopups.FirstOrDefaultAsync(x => x.LeadId == lead.Id);
@@ -119,15 +137,15 @@ public class EventService : IEventService
         return TResult.Success;
     }
 
+    public Task<ListResult<object>> GetListAsync(EventFilterOptions filterOptions) => _eventRepository.GetListAsync(filterOptions);
+
     public async Task<ListResult<object>> ListKeyInRevenueAsync(SaleRevenueFilterOptions filterOptions)
     {
         var query = from a in _context.Leads
-                    join b in _context.LeadFeedbacks on a.Id equals b.LeadId
                     join c in _context.Users on a.SalesId equals c.Id
                     where a.Status == LeadStatus.Done || a.Status == LeadStatus.AccountantApproved || a.Status == LeadStatus.DosApproved || a.Status == LeadStatus.LeadAccept
                     select new
                     {
-                        b.ContractCode,
                         a.EventDate,
                         a.EventTime,
                         a.CreatedDate,
@@ -139,7 +157,6 @@ public class EventService : IEventService
                         KeyInName = a.Name,
                         KeyInPhoneNumber = a.PhoneNumber,
                         a.Branch,
-                        b.ContractCode2,
                         Amount = _context.UserTopups.Where(x => x.LeadId == a.Id && x.Type == TopupType.Event && x.Status == TopupStatus.AccountantApproved).Sum(x => x.Amount),
                         AmountPending = _context.UserTopups.Where(x => x.LeadId == a.Id && x.Type == TopupType.Event && x.Status == TopupStatus.Pending).Sum(x => x.Amount)
                     };
@@ -171,8 +188,6 @@ public class EventService : IEventService
                     join e in _context.Users on a.AccountantId equals e.Id into e1
                     from e in e1.DefaultIfEmpty()
                     join f in _context.Users on a.DosId equals f.Id into f1
-                    from f in f1.DefaultIfEmpty()
-                    join g in _context.LeadFeedbacks on c.Id equals g.LeadId
                     where a.Type == TopupType.Event
                     select new
                     {
@@ -190,9 +205,7 @@ public class EventService : IEventService
                         KeyInId = c.Id,
                         AccountantName = e.Name,
                         a.AccountantApprovedDate,
-                        DosName = f.Name,
                         a.DirectorApprovedDate,
-                        g.ContractCode
                     };
         var user = await _context.Users.FindAsync(_currentUser.GetId());
         if (user is null) return default;
@@ -230,6 +243,19 @@ public class EventService : IEventService
                     };
         query = query.OrderByDescending(x => x.CreatedDate);
         return await ListResult<object>.Success(query, filterOptions);
+    }
+
+    public async Task<TResult> UpdateAsync(EventUpdateArgs args)
+    {
+        var data = await _eventRepository.FindAsync(args.Id);
+        if (data is null) return TResult.Failed("Sự kiện không tồn tại!");
+        data.Name = args.Name;
+        data.ModifiedBy = _currentUser.GetId();
+        data.ModifiedDate = DateTime.Now;
+        data.StartDate = args.StartDate.Date.Add(args.StartTime);
+        data.Status = args.Status;
+        await _eventRepository.UpdateAsync(data);
+        return TResult.Success;
     }
 
     public async Task<TResult> UpdateSaleRevenueAsync(AddSaleRevenue args)

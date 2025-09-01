@@ -23,6 +23,7 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     public virtual DbSet<WorkContent> WorkContents { get; set; }
     public virtual DbSet<WorkItem> WorkItems { get; set; }
     public virtual DbSet<Contact> Contacts { get; set; }
+    public virtual DbSet<CallHistory> CallHistories { get; set; }
     public virtual DbSet<Localization> Localizations { get; set; }
     public virtual DbSet<Order> Orders { get; set; }
     public virtual DbSet<OrderDetail> OrderDetails { get; set; }
@@ -50,12 +51,11 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     public DbSet<UserTopup> UserTopups { get; set; }
     public DbSet<UserChange> UserChanges { get; set; }
     public DbSet<Lead> Leads { get; set; }
+    public DbSet<Campaign> Campaigns { get; set; }
     public DbSet<Event> Events { get; set; }
-    public DbSet<LeadFeedback> LeadFeedbacks { get; set; }
     public DbSet<CardHolderQueue> CardHolderQueues { get; set; }
     public DbSet<SubLead> SubLeads { get; set; }
     public DbSet<Table> Tables { get; set; }
-    public DbSet<TableStatus> TableStatuses { get; set; }
     public DbSet<LeadHistory> LeadHistories { get; set; }
     public DbSet<LeadProcess> LeadProcesses { get; set; }
     public DbSet<Contract> Contracts { get; set; }
@@ -75,7 +75,6 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     public DbSet<Notification> Notifications { get; set; }
     public DbSet<Transport> Transports { get; set; }
     public DbSet<CallStatus> CallStatuses { get; set; }
-    public DbSet<CallHistory> CallHistories { get; set; }
     public DbSet<Room> Rooms { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)

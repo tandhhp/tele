@@ -46,7 +46,7 @@ public class LogService(IWebHostEnvironment _webHostEnvironment, ICurrentUser _c
             Message = ex.ToString(),
             CreatedDate = DateTime.Now,
             UserId = _currentUser.GetId(),
-            CatalogId = Guid.Empty // Assuming no specific catalog for exceptions
+            CatalogId = Guid.Empty
         });
     }
 

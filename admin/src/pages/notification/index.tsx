@@ -3,7 +3,8 @@ import { ActionType, PageContainer, ProList } from "@ant-design/pro-components";
 import { List, Typography, Button, Space, Card, Row, Col, Tag, Popconfirm, message } from "antd";
 import { apiNotificationDelete, apiNotificationDetail, apiNotificationMyList } from "@/services/notification";
 import dayjs from "dayjs";
-import { DeleteOutlined } from "@ant-design/icons";
+import { DeleteOutlined, LeftOutlined } from "@ant-design/icons";
+import { history } from "@umijs/max";
 
 const NotificationPage: React.FC = () => {
     const [selectedNotification, setNotifications] = useState<any>();
@@ -17,7 +18,7 @@ const NotificationPage: React.FC = () => {
     };
 
     return (
-        <PageContainer>
+        <PageContainer extra={<Button icon={<LeftOutlined />} onClick={() => history.back()}>Quay lại</Button>}>
             <Row gutter={[16, 16]}>
                 <Col xs={24} md={8}>
                     <Card title="Danh sách thông báo" bordered={false} style={{ height: "100%" }}>

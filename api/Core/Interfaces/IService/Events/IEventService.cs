@@ -2,7 +2,7 @@
 using Waffle.Entities;
 using Waffle.Models;
 
-namespace Waffle.Core.Interfaces.IService;
+namespace Waffle.Core.Interfaces.IService.Events;
 
 public interface IEventService
 {
@@ -13,4 +13,8 @@ public interface IEventService
     Task<TResult> DeleteSaleRevenueAsync(Lead lead);
     Task<ListResult<object>> ListKeyInRevenueAsync(SaleRevenueFilterOptions filterOptions);
     Task<object?> RevenueHistoriesAsync(KeyInRevenueFilterOptions filterOptions);
+    Task<ListResult<object>> GetListAsync(EventFilterOptions filterOptions);
+    Task<TResult> DeleteAsync(int id);
+    Task<TResult> UpdateAsync(EventUpdateArgs args);
+    Task<TResult> CreateAsync(EventCreateArgs args);
 }

@@ -136,35 +136,6 @@ public class UserService(UserManager<ApplicationUser> _userManager, RoleManager<
 
                 lead.Status = LeadStatus.Done;
                 _context.Leads.Update(lead);
-                var leadFeedback = await _context.LeadFeedbacks.FirstOrDefaultAsync(x => x.LeadId == lead.Id);
-                if (leadFeedback is null) return IdentityResult.Failed(new IdentityError
-                {
-                    Code = HttpStatusCode.NotFound.ToString(),
-                    Description = "Không tìm thấy feedback!"
-                });
-
-                // Nếu lead này đã có công nợ thì không tạo mới
-                if (!await _context.UserTopups.AnyAsync(x => x.LeadId == lead.Id))
-                {
-                    await _context.UserTopups.AddAsync(new UserTopup
-                    {
-                        CreatedDate = DateTime.Now,
-                        CardHolderId = user.Id,
-                        DirectorApprovedDate = DateTime.Now,
-                        DirectorId = lead.DosId,
-                        AccountantId = lead.AccountantId,
-                        Amount = leadFeedback.AmountPaid ?? 0,
-                        DosId = lead.DosId,
-                        Note = "Tự động tạo công nợ theo sự kiện",
-                        AccountantApprovedDate = DateTime.Now,
-                        Status = TopupStatus.AccountantApproved,
-                        SaleId = user.SellerId ?? Guid.Empty,
-                        SmId = user.SmId,
-                        Type = TopupType.Debt,
-                        LeadId = lead.Id,
-                        ContractCode = leadFeedback.ContractCode
-                    });
-                }
 
                 await _context.SaveChangesAsync();
             }

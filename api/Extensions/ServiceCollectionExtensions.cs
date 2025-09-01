@@ -1,8 +1,10 @@
 ﻿using Waffle.Core.Foundations;
 using Waffle.Core.Interfaces;
 using Waffle.Core.Interfaces.IRepository;
+using Waffle.Core.Interfaces.IRepository.Events;
 using Waffle.Core.Interfaces.IRepository.Tele;
 using Waffle.Core.Interfaces.IService;
+using Waffle.Core.Interfaces.IService.Events;
 using Waffle.Core.Interfaces.IService.Tele;
 using Waffle.Core.Senders;
 using Waffle.Core.Services;
@@ -15,10 +17,12 @@ using Waffle.Core.Services.Events;
 using Waffle.Core.Services.JobKinds;
 using Waffle.Core.Services.KeyIn;
 using Waffle.Core.Services.Provinces;
+using Waffle.Core.Services.Rooms;
 using Waffle.Core.Services.Teams;
 using Waffle.Core.Services.Tele;
 using Waffle.Data.ContentGenerators;
 using Waffle.Infrastructure.Repositories;
+using Waffle.Infrastructure.Repositories.Events;
 using Waffle.Infrastructure.Repositories.Tele;
 using Waffle.Services;
 
@@ -54,7 +58,12 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IProductService, ProductService>();
         services.AddScoped<ISettingRepository, SettingRepository>();
         services.AddScoped<IMigrationService, MigrationService>();
+
+        services.AddScoped<IEventRepository, EventRepository>();
         services.AddScoped<IEventService, EventService>();
+        services.AddScoped<IRoomRepository, RoomRepository>();
+        services.AddScoped<IRoomService, RoomService>();
+
         services.AddScoped<IKeyInService, KeyInService>();
         services.AddScoped<ILoanService, LoanService>();
 

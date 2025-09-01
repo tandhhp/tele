@@ -256,7 +256,7 @@ const CardHolderPage: React.FC = () => {
                             setOpenContract(true);
                         }
                         if (info.key === 'detail') {
-                            history.push(`/users/member/${entity.id}`);
+                            history.push(`/user/member/${entity.id}`);
                         }
                         if (info.key === 'loyalty') {
                             setOpenLoyalty(true);

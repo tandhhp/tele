@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Waffle.Entities.Contacts;
 
 namespace Waffle.Entities;
 
@@ -42,5 +41,4 @@ public class LeadFeedback
     public string? ContractCode2 { get; set; }
 
     public Lead? Lead {  get; set; }
-    public Table? Table { get; set; }
 }

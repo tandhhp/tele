@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Waffle.Data;
 using Waffle.Entities;
-using Microsoft.AspNetCore.Authorization;
 using Waffle.Core.Services.Contacts.Models;
 using Microsoft.AspNetCore.Identity;
 using Waffle.Core.Interfaces.IService;
@@ -15,19 +14,35 @@ using OfficeOpenXml;
 using OfficeOpenXml.Style;
 using Waffle.Core.Helpers;
 using Waffle.Models.Args;
-using Waffle.Core.Services.Events.Models;
 using Waffle.Core.Foundations;
 
 namespace Waffle.Controllers;
 
-[Route("api/[controller]")]
 public class ContactController(UserManager<ApplicationUser> _userManager,
-    IEventService _eventService,
     INotificationService _notificationService,
     ILogService _appLogService, ApplicationDbContext _context, IUserService _userService, IContactService _contactService) : BaseController
 {
     [HttpGet("list")]
     public async Task<IActionResult> ListAsync([FromQuery] ContactFilterOptions filterOptions) => Ok(await _userService.ListAsync(filterOptions));
+
+    [HttpGet("statistics")]
+    public async Task<IActionResult> StatisticsAsync()
+    {
+        var totalContacts = await _context.Contacts.CountAsync();
+        var currentMonth = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
+        var previousMonth = currentMonth.AddMonths(-1);
+        var totalCurrentMonth = await _context.Contacts.CountAsync(x => x.CreatedDate >= currentMonth);
+        var totalPreviousMonth = await _context.Contacts.CountAsync(x => x.CreatedDate >= previousMonth && x.CreatedDate < currentMonth);
+        var currentYear = new DateTime(DateTime.Now.Year, 1, 1);
+        var totalCurrentYear = await _context.Contacts.CountAsync(x => x.CreatedDate >= currentYear);
+        return Ok(TResult<object>.Ok(new
+        {
+            totalContacts,
+            totalCurrentMonth,
+            totalPreviousMonth,
+            totalCurrentYear
+        }));
+    }
 
     [HttpGet("{id}")]
     public async Task<IActionResult> GetAsync([FromRoute] Guid id) => Ok(TResult<object>.Ok(await _context.Contacts.FindAsync(id)));
@@ -443,19 +458,6 @@ public class ContactController(UserManager<ApplicationUser> _userManager,
         });
     }
 
-    [HttpGet("event/list")]
-    public async Task<IActionResult> ListEventAsync([FromQuery] SearchFilterOptions filterOptions)
-    {
-        var query = from a in _context.Events
-                    select a;
-        query = query.OrderByDescending(x => x.StartDate);
-        return Ok(new
-        {
-            data = await query.Skip((filterOptions.Current - 1) * filterOptions.PageSize).Take(filterOptions.PageSize).ToListAsync(),
-            total = await query.CountAsync()
-        });
-    }
-
     [HttpPost("lead/delete/{id}")]
     public async Task<IActionResult> DeleteLeadAsync([FromRoute] Guid id)
     {
@@ -481,44 +483,12 @@ public class ContactController(UserManager<ApplicationUser> _userManager,
         return Ok();
     }
 
-    [HttpPost("event/add")]
-    public async Task<IActionResult> AddEventAsync([FromBody] Event args)
-    {
-        await _context.Events.AddAsync(args);
-        await _context.SaveChangesAsync();
-        return Ok();
-    }
-
-    [HttpPost("event/update")]
-    public async Task<IActionResult> UpdateAsync([FromBody] Event args)
-    {
-        var e = await _context.Events.FindAsync(args.Id);
-        if (e is null) return BadRequest();
-        e.StartDate = args.StartDate;
-        e.Time = args.Time;
-        e.Name = args.Name;
-        _context.Events.Update(e);
-        await _context.SaveChangesAsync();
-        return Ok();
-    }
-
     [HttpPost("lead/status")]
     public async Task<IActionResult> ChangeStatusLeadAsync([FromBody] Lead args)
     {
         var lead = await _context.Leads.FindAsync(args.Id);
         if (lead is null) return BadRequest();
         lead.Status = args.Status;
-        if (args.Status == LeadStatus.LeadAccept)
-        {
-            if (!await _context.LeadFeedbacks.AnyAsync(x => x.LeadId == lead.Id))
-            {
-                return BadRequest("Vui lòng nhập feedback");
-            }
-            if (!await _context.Users.AnyAsync(x => x.Id == lead.SalesId))
-            {
-                return BadRequest("Vui lòng chọn trợ lý tiếp khách!");
-            }
-        }
         if (args.Status == LeadStatus.AccountantApproved)
         {
             if (!User.IsInRole(RoleName.Accountant) && !User.IsInRole(RoleName.ChiefAccountant)) return BadRequest("Chỉ kế toán được phê duyệt!");
@@ -580,9 +550,6 @@ public class ContactController(UserManager<ApplicationUser> _userManager,
             value = x.Id
         }).ToListAsync());
 
-    [HttpGet("event/{id}")]
-    public async Task<IActionResult> GetEventAsync([FromRoute] Guid id) => Ok(await _context.Events.FindAsync(id));
-
     [HttpGet("lead/{id}")]
     public async Task<IActionResult> GetLeadDetailAsync([FromRoute] Guid id)
     {
@@ -619,8 +586,6 @@ public class ContactController(UserManager<ApplicationUser> _userManager,
             var user = await _context.Users.FindAsync(User.GetId());
             if (user is null) return Unauthorized();
             var query = from a in _context.Leads
-                        join b in _context.LeadFeedbacks on a.Id equals b.LeadId into ab
-                        from b in ab.DefaultIfEmpty()
                         join e in _context.Users on a.AccountantId equals e.Id into ae
                         from e in ae.DefaultIfEmpty()
                         join f in _context.Users on a.TelesaleId equals f.Id into af
@@ -636,7 +601,6 @@ public class ContactController(UserManager<ApplicationUser> _userManager,
                             a.CreatedDate,
                             a.Name,
                             a.EventTime,
-                            b.JobTitle,
                             a.Address,
                             a.Branch,
                             a.Status,
@@ -647,28 +611,14 @@ public class ContactController(UserManager<ApplicationUser> _userManager,
                             a.SalesId,
                             SubLeads = _context.SubLeads.Count(x => x.LeadId == a.Id),
                             SalesName = _context.Users.First(x => x.Id == a.SalesId).Name,
-                            b.TableStatus,
-                            b.TableId,
-                            b.ContractCode,
-                            b.AmountPaid,
-                            b.ContractAmount,
-                            SallerId = a.SalesId,
-                            b.Evidence,
                             AccountantName = e.Name,
                             a.AccountantId,
-                            b.Source,
                             a.TelesaleId,
                             a.TmId,
-                            b.TO,
-                            b.Voucher,
-                            b.IsOnsiteTesting,
                             a.Note,
                             TeleName = g.Name ?? f.Name,
                             SubLeadName = string.Join(",", _context.SubLeads.Where(x => x.LeadId == a.Id).Select(x => x.Name)),
-                            inviteCount = _context.LeadHistories.Count(x => x.LeadId == a.Id) + 1,
-                            b.CheckinTime,
-                            b.CheckoutTime,
-                            b.ContractCode2
+                            inviteCount = _context.LeadHistories.Count(x => x.LeadId == a.Id) + 1
                         };
             if (args.EventDate != null)
             {
@@ -689,10 +639,6 @@ public class ContactController(UserManager<ApplicationUser> _userManager,
             if (!string.IsNullOrEmpty(args.Email))
             {
                 query = query.Where(x => !string.IsNullOrEmpty(x.Email) && x.Email.ToLower().Contains(args.Email.ToLower()));
-            }
-            if (!string.IsNullOrEmpty(args.Source))
-            {
-                query = query.Where(x => x.Source == args.Source);
             }
             if (User.IsInRole(RoleName.Sales))
             {
@@ -756,169 +702,7 @@ public class ContactController(UserManager<ApplicationUser> _userManager,
             return BadRequest(ex.ToString());
         }
     }
-
-    [HttpGet("feedback/{id}")]
-    public async Task<IActionResult> GetFeedbackAsync([FromRoute] Guid id) => Ok(await _context.LeadFeedbacks.FirstOrDefaultAsync(x => x.LeadId == id));
-
-
-    [HttpPost("feedback/add")]
-    public async Task<IActionResult> AddFeedbackAsync([FromBody] LeadFeedback args)
-    {
-        if (await _context.LeadFeedbacks.AnyAsync(x => x.LeadId == args.LeadId))
-        {
-            return BadRequest("Feedback đã được thêm, vui lòng tải lại trang!");
-        }
-        await _context.LeadFeedbacks.AddAsync(args);
-        var lead = await _context.Leads.FindAsync(args.LeadId);
-        if (lead == null) return BadRequest("Không tìm thấy khách hàng tiềm năng");
-        if (args.SellerId != null)
-        {
-            // Nếu trợ lý khác tiếp khách thì sẽ tính khách cho trợ lý đó
-            lead.SalesId = args.SellerId ?? Guid.Empty;
-            if (lead.SalesId != null)
-            {
-                var sale = await _userManager.FindByIdAsync(lead.SalesId.GetValueOrDefault().ToString());
-                if (sale is null) return BadRequest("Sale not found!");
-                lead.Branch = sale.Branch;
-            }
-            _context.Leads.Update(lead);
-        }
-
-        await _context.LeadProcesses.AddAsync(new LeadProcess
-        {
-            LeadId = lead.Id,
-            Status = lead.Status,
-            CreatedDate = DateTime.Now,
-            UserId = User.GetId(),
-            Note = "Thêm feedback"
-        });
-
-        if (args.TableId != null && args.EventTime != null)
-        {
-            var tableStatus = await _context.TableStatuses.FirstOrDefaultAsync(x => x.TableId == args.TableId && x.EventDate.Date == args.EventDate.Date && x.EventTime == args.EventTime);
-            if (tableStatus is null)
-            {
-                await _context.TableStatuses.AddAsync(new TableStatus
-                {
-                    TableId = args.TableId.GetValueOrDefault(),
-                    EventDate = args.EventDate,
-                    EventTime = args.EventTime,
-                    IsAvailable = false
-                });
-            }
-        }
-
-        if (args.AmountPaid != null && lead.SalesId != null)
-        {
-            var result = await _eventService.AddSaleRevenueAsync(new AddSaleRevenue
-            {
-                Amount = args.AmountPaid.GetValueOrDefault(),
-                LeadId = lead.Id,
-                SaleId = lead.SalesId.GetValueOrDefault(),
-                Note = "Sự kiện thêm số tiền đã thành thoán."
-            });
-            if (!result.Succeeded) return BadRequest(result.Message);
-        }
-
-        await _context.SaveChangesAsync();
-        return Ok();
-    }
-
-    [HttpPost("feedback/update")]
-    public async Task<IActionResult> FeedbackUpdateAsync([FromBody] LeadFeedback args)
-    {
-        var data = await _context.LeadFeedbacks.FindAsync(args.Id);
-        if (data == null) return BadRequest();
-
-        var lead = await _context.Leads.FindAsync(args.LeadId);
-        if (lead == null) return BadRequest("Không tìm thấy Key-In");
-        if (lead.Status == LeadStatus.Done || lead.Status == LeadStatus.LeadReject) return BadRequest("Không thể chỉnh sửa khách hàng đã chuyển đổi hoặc khách hàng đã từ chối");
-
-        if (data.AmountPaid != null && args.AmountPaid == null)
-        {
-            await _eventService.DeleteSaleRevenueAsync(lead);
-        }
-
-        data.InterestLevel = args.InterestLevel;
-        data.FinancialSituation = args.FinancialSituation;
-        data.Source = args.Source;
-        data.RejectReason = args.RejectReason;
-        data.TO = args.TO;
-        data.Age = args.Age;
-        data.JobTitle = args.JobTitle;
-        data.Evidence = args.Evidence;
-        data.SellerId = args.SellerId;
-        data.Voucher = args.Voucher;
-        data.IsOnsiteTesting = args.IsOnsiteTesting;
-
-        if (args.SellerId != null)
-        {
-            // Nếu trợ lý khác tiếp khách thì sẽ tính khách cho trợ lý đó
-            lead.SalesId = args.SellerId ?? Guid.Empty;
-            if (lead.SalesId != null)
-            {
-                var sale = await _userManager.FindByIdAsync(lead.SalesId.GetValueOrDefault().ToString());
-                if (sale is null) return BadRequest("Sale not found!");
-                lead.Branch = sale.Branch;
-            }
-            _context.Leads.Update(lead);
-        }
-
-        if (User.IsInRole(RoleName.Event) || User.IsInRole(RoleName.ChiefAccountant))
-        {
-            data.CheckinTime = args.CheckinTime;
-            data.CheckoutTime = args.CheckoutTime;
-            data.AmountPaid = args.AmountPaid;
-            data.ContractAmount = args.ContractAmount;
-            data.ContractCode = args.ContractCode;
-            data.ContractCode2 = args.ContractCode2;
-            data.TableStatus = args.TableStatus;
-
-            if (args.TableId != null && data.EventTime != null)
-            {
-                var tableStatus = await _context.TableStatuses.FirstOrDefaultAsync(x => x.TableId == data.TableId && x.EventDate.Date == data.EventDate.Date && x.EventTime == data.EventTime);
-                if (tableStatus != null)
-                {
-                    _context.TableStatuses.Remove(tableStatus);
-                }
-                await _context.TableStatuses.AddAsync(new TableStatus
-                {
-                    TableId = args.TableId.GetValueOrDefault(),
-                    EventDate = data.EventDate,
-                    EventTime = data.EventTime,
-                    IsAvailable = false
-                });
-            }
-            data.TableId = args.TableId;
-        }
-
-        await _context.LeadProcesses.AddAsync(new LeadProcess
-        {
-            LeadId = lead.Id,
-            Status = lead.Status,
-            CreatedDate = DateTime.Now,
-            UserId = User.GetId(),
-            Note = "Cập nhật feedback"
-        });
-
-        if (args.AmountPaid != null)
-        {
-            var result = await _eventService.UpdateSaleRevenueAsync(new AddSaleRevenue
-            {
-                Amount = args.AmountPaid.GetValueOrDefault(),
-                LeadId = lead.Id,
-                SaleId = lead.SalesId.GetValueOrDefault(),
-                Note = "Sự kiện cập nhật số tiền đã thành thoán.",
-                ContractCode = data.ContractCode
-            });
-            if (!result.Succeeded) return BadRequest(result.Message);
-        }
-
-        _context.LeadFeedbacks.Update(data);
-        await _context.SaveChangesAsync();
-        return Ok();
-    }
-
+    
     [HttpGet("card-holder-queue-list")]
     public async Task<IActionResult> GetCardHolderQueueListAsync([FromQuery] UserFilterOptions filterOptions)
     {
@@ -928,8 +712,6 @@ public class ContactController(UserManager<ApplicationUser> _userManager,
                     from c in ac.DefaultIfEmpty()
                     join d in _context.Users on a.RequestBy equals d.Id
                     join e in _context.Cards on b.CardId equals e.Id
-                    join fb in _context.LeadFeedbacks on a.LeadId equals fb.LeadId into afb
-                    from fb in afb.DefaultIfEmpty()
                     select new
                     {
                         a.Id,
@@ -944,8 +726,6 @@ public class ContactController(UserManager<ApplicationUser> _userManager,
                         RequestBy = d.Name,
                         b.PhoneNumber,
                         b.Email,
-                        fb.ContractAmount,
-                        fb.AmountPaid,
                         b.Amount,
                         a.CardHolderId,
                         b.DosId,
@@ -1105,33 +885,6 @@ public class ContactController(UserManager<ApplicationUser> _userManager,
         return Ok();
     }
 
-    [HttpGet("floor-options")]
-    public async Task<IActionResult> GetFloorOptionsAsync() => Ok(await _context.Tables.Distinct().Select(x => new
-    {
-        label = x,
-        value = x
-    }).ToListAsync());
-
-    [HttpGet("table-options")]
-    public async Task<IActionResult> GetTableOptionsAsync([FromQuery] DateTime? eventDate, [FromQuery] string? eventTime)
-    {
-        var user = await _userManager.FindByIdAsync(User.GetClaimId());
-        if (user is null) return Unauthorized();
-        var tables = await _context.Tables
-            .Where(x => x.Active)
-        .OrderBy(x => x.SortOrder).AsNoTracking().ToListAsync();
-
-        eventDate ??= DateTime.Now;
-        var tableStatuses = await _context.TableStatuses.Where(x => x.EventDate.Date == eventDate.Value.Date).Where(x => x.EventTime == eventTime).AsNoTracking().ToListAsync();
-
-        return Ok(tables.Select(x => new
-        {
-            label = x.Name,
-            value = x.Id,
-            disabled = tableStatuses
-        }));
-    }
-
     [HttpGet("my-keyin-list")]
     public async Task<IActionResult> GetMyKeyInAsync([FromQuery] UserFilterOptions filterOptions)
     {
@@ -1197,13 +950,6 @@ public class ContactController(UserManager<ApplicationUser> _userManager,
                 return BadRequest("Khách đã chốt deal không thể di chuyển ngày!");
             }
 
-            var feedback = await _context.LeadFeedbacks.FirstOrDefaultAsync(x => x.LeadId == lead.Id);
-            if (feedback != null)
-            {
-                feedback.TableId = null;
-                _context.LeadFeedbacks.Update(feedback);
-            }
-
             if (lead.Status != LeadStatus.Approved && lead.Status != LeadStatus.Pending)
             {
                 lead.Status = LeadStatus.ReInvite;
@@ -1214,8 +960,7 @@ public class ContactController(UserManager<ApplicationUser> _userManager,
                     EventTime = lead.EventTime,
                     Note = lead.Note,
                     SalesId = lead.SalesId,
-                    TelesaleId = lead.TelesaleId,
-                    TableStatus = feedback?.TableStatus
+                    TelesaleId = lead.TelesaleId
                 });
             }
 
@@ -1259,74 +1004,6 @@ public class ContactController(UserManager<ApplicationUser> _userManager,
         }
     }
 
-    [HttpPost("checkout-table")]
-    public async Task<IActionResult> CheckoutTableAysnc([FromBody] TableStatus args)
-    {
-        var data = await _context.TableStatuses.FirstOrDefaultAsync(x => x.EventDate.Date == args.EventDate.Date && x.EventTime == args.EventTime && x.TableId == args.TableId);
-        if (data != null)
-        {
-            _context.TableStatuses.Remove(data);
-            await _context.SaveChangesAsync();
-        }
-        return Ok(IdentityResult.Success);
-    }
-
-    [HttpGet("feedback/list")]
-    public async Task<IActionResult> GetLeadFeedbackAsync([FromQuery] UserFilterOptions filterOptions)
-    {
-        var query = from a in _context.LeadFeedbacks
-                    join b in _context.Leads on a.LeadId equals b.Id
-                    select new
-                    {
-                        a.InterestLevel,
-                        a.JobTitle,
-                        a.FinancialSituation,
-                        a.Age,
-                        a.AmountPaid,
-                        a.CheckinTime,
-                        a.CheckoutTime,
-                        a.RejectReason,
-                        a.Source,
-                        a.TO,
-                        a.ContractCode,
-                        a.ContractAmount,
-                        a.TableStatus,
-                        a.Floor,
-                        b.Name,
-                        b.Email,
-                        b.PhoneNumber,
-                        b.Status,
-                        b.EventTime,
-                        b.EventDate,
-                        a.Evidence,
-                        a.SellerId
-                    };
-        if (!string.IsNullOrWhiteSpace(filterOptions.Name))
-        {
-            query = query.Where(x => x.Name.ToLower().Contains(filterOptions.Name.ToLower()));
-        }
-        if (!string.IsNullOrWhiteSpace(filterOptions.PhoneNumber))
-        {
-            query = query.Where(x => x.PhoneNumber.Contains(filterOptions.PhoneNumber));
-        }
-        query = query.OrderByDescending(x => x.EventDate);
-        return Ok(new
-        {
-            data = await query.Skip((filterOptions.Current - 1) * filterOptions.PageSize).Take(filterOptions.PageSize).ToListAsync(),
-            total = await query.CountAsync()
-        });
-    }
-
-    [HttpPost("table/remove/{id}")]
-    public async Task<IActionResult> TableRemoveAsync([FromRoute] Guid id)
-    {
-        var table = await _context.TableStatuses.FindAsync(id);
-        if (table == null) return BadRequest("table not found");
-        _context.TableStatuses.Remove(table);
-        await _context.SaveChangesAsync();
-        return Ok(IdentityResult.Success);
-    }
-
     [HttpGet("list-lead-history/{id}")]
     public async Task<IActionResult> ListLeadHistoryAsync([FromQuery] LeadFilterOptions filterOptions, [FromRoute] Guid id)
     {
@@ -1365,8 +1042,6 @@ public class ContactController(UserManager<ApplicationUser> _userManager,
             var query = from a in _context.Leads
                         join b in _context.Users on a.TelesaleId equals b.Id into ab
                         from b in ab.DefaultIfEmpty()
-                        join c in _context.LeadFeedbacks on a.Id equals c.LeadId into ac
-                        from c in ac.DefaultIfEmpty()
                         join d in _context.Users on a.SalesId equals d.Id into ad
                         from d in ad.DefaultIfEmpty()
                         where a.Branch == user.Branch && a.Status != LeadStatus.Pending && a.Status != LeadStatus.Approved
@@ -1378,12 +1053,6 @@ public class ContactController(UserManager<ApplicationUser> _userManager,
                             a.EventDate,
                             a.EventTime,
                             TeleName = b.Name,
-                            c.Source,
-                            c.ContractCode,
-                            c.CheckinTime,
-                            c.CheckoutTime,
-                            a.Status,
-                            c.TableStatus,
                             SalesName = d.Name,
                             a.Note
                         };
@@ -1419,50 +1088,12 @@ public class ContactController(UserManager<ApplicationUser> _userManager,
             var row = 2;
             foreach (var item in data)
             {
-                var status = "Chờ duyệt";
-                switch (item.Status)
-                {
-                    case LeadStatus.Pending:
-                        break;
-                    case LeadStatus.Approved:
-                        status = "Đã duyệt";
-                        break;
-                    case LeadStatus.Checkin:
-                        status = "Check-in";
-                        break;
-                    case LeadStatus.LeadAccept:
-                        status = "Chốt deal";
-                        break;
-                    case LeadStatus.LeadReject:
-                        status = "Từ chối";
-                        break;
-                    case LeadStatus.Done:
-                        status = "Hoàn thành";
-                        break;
-                    case LeadStatus.AccountantApproved:
-                        status = "KT xác nhận";
-                        break;
-                    case LeadStatus.DosApproved:
-                        status = "GD xác nhận";
-                        break;
-                    case LeadStatus.ReInvite:
-                        status = "Mời lại";
-                        break;
-                    default:
-                        break;
-                }
                 ws.Cells[row, 1].Value = row - 1;
                 ws.Cells[row, 2].Value = item.Name;
                 ws.Cells[row, 3].Value = item.PhoneNumber;
-                ws.Cells[row, 4].Value = item.TableStatus;
                 ws.Cells[row, 5].Value = item.EventDate?.ToString("dd-MM-yyyy");
                 ws.Cells[row, 6].Value = item.EventTime;
                 ws.Cells[row, 7].Value = item.TeleName;
-                ws.Cells[row, 8].Value = item.Source;
-                ws.Cells[row, 9].Value = item.ContractCode;
-                ws.Cells[row, 10].Value = item.CheckinTime?.ToString();
-                ws.Cells[row, 11].Value = item.CheckoutTime?.ToString();
-                ws.Cells[row, 12].Value = status;
                 ws.Cells[row, 13].Value = item.SalesName;
                 ws.Cells[row, 14].Value = item.Note;
 

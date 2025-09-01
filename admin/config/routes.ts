@@ -342,11 +342,6 @@ export default [
         component: './user/contact'
       },
       {
-        name: 'Thay đổi nhân sự',
-        path: '/user/changes',
-        component: './user/changes'
-      },
-      {
         name: 'Thông báo',
         path: '/user/notification',
         component: './notification',
@@ -482,35 +477,20 @@ export default [
     path: '/event',
     routes: [
       {
-        name: 'Sự kiện 09:00',
-        path: '/event/am',
-        component: './event/user'
+        name: 'Sự kiện',
+        path: '/event/index',
+        component: './event'
       },
       {
-        name: 'Sự kiện 14:30',
-        path: '/event/pm',
-        component: './event/user'
+        name: 'Phòng',
+        path: '/event/room',
+        component: './event/room'
       },
       {
-        name: 'Check-In',
-        path: '/event/checkin/:id',
-        component: './event/user',
+        name: 'Bàn',
+        path: '/event/room/table/:id',
+        component: './event/room/table',
         hideInMenu: true
-      },
-      {
-        name: 'Feedback',
-        path: '/event/feedback',
-        component: './event/feedback'
-      },
-      {
-        name: 'Key-In của tôi',
-        path: '/event/my-keyin',
-        component: './event/my-keyin'
-      },
-      {
-        name: 'Công nợ',
-        path: '/event/debt',
-        component: './event/debt'
       }
     ]
   },
