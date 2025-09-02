@@ -1,6 +1,6 @@
 import { request } from "@umijs/max";
 
-export async function queryLogs(params: any) {
+export async function apiHistoryList(params: any) {
   return request(`log/list`, {
     params
   });

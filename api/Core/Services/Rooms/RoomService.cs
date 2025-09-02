@@ -9,16 +9,16 @@ using Waffle.Models;
 
 namespace Waffle.Core.Services.Rooms;
 
-public class RoomService(IRoomRepository _roomRepository, IDistrictService _districtService, ICurrentUser _currentUser) : IRoomService
+public class RoomService(IRoomRepository _roomRepository, IDistrictService _districtService, ICurrentUser _currentUser, IBranchService _branchService) : IRoomService
 {
     public async Task<TResult> CreateAsync(RoomCreateArgs args)
     {
-        var district = await _districtService.FindAsync(args.DistrictId);
-        if (district is null) return TResult.Failed("Quận/Huyện không tồn tại trong hệ thống");
+        var branch = await _branchService.FindAsync(args.BranchId);
+        if (branch is null) return TResult.Failed("Quận/Huyện không tồn tại trong hệ thống");
         var room = new Room
         {
             Name = args.Name,
-            DistrictId = args.DistrictId,
+            BranchId = args.BranchId,
             CreatedDate = DateTime.Now,
             CreatedBy = _currentUser.GetId()
         };
@@ -44,10 +44,10 @@ public class RoomService(IRoomRepository _roomRepository, IDistrictService _dist
     {
         var data = await FindAsync(args.Id);
         if (data is null) return TResult.Failed("Phòng không tồn tại trong hệ thống");
-        var district = await _districtService.FindAsync(args.DistrictId);
+        var district = await _districtService.FindAsync(args.BranchId);
         if (district is null) return TResult.Failed("Quận/Huyện không tồn tại trong hệ thống");
         data.Name = args.Name;
-        data.DistrictId = args.DistrictId;
+        data.BranchId = args.BranchId;
         data.ModifiedDate = DateTime.Now;
         data.ModifiedBy = _currentUser.GetId();
         await _roomRepository.UpdateAsync(data);

@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Waffle.Entities;
 
@@ -9,10 +8,6 @@ public class Event : AuditEntity<int>
     public string Name { get; set; } = default!;
     public DateTime StartDate { get; set; }
     public EventStatus Status { get; set; }
-    [ForeignKey(nameof(Room))]
-    public int RoomId { get; set; }
-
-    public Room? Room { get; set; }
 }
 
 public enum EventStatus

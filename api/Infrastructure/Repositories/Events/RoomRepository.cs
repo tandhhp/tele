@@ -13,21 +13,22 @@ public class RoomRepository(ApplicationDbContext context) : EfRepository<Room>(c
     public Task<ListResult<object>> GetListAsync(RoomFilterOptions filterOptions)
     {
         var query = from r in _context.Rooms
-                    join d in _context.Districts on r.DistrictId equals d.Id
+                    join d in _context.Branches on r.BranchId equals d.Id
                     select new
                     {
                         r.Id,
                         r.Name,
-                        r.DistrictId,
-                        DistrictName = d.Name
+                        r.BranchId,
+                        DistrictName = d.Name,
+                        TableCount = _context.Tables.Count(t => t.RoomId == r.Id)
                     };
         if (!string.IsNullOrWhiteSpace(filterOptions.Name))
         {
             query = query.Where(x => x.Name.ToLower().Contains(filterOptions.Name.ToLower()));
         }
-        if (filterOptions.DistrictId.HasValue)
+        if (filterOptions.BranchId.HasValue)
         {
-            query = query.Where(x => x.DistrictId == filterOptions.DistrictId);
+            query = query.Where(x => x.BranchId == filterOptions.BranchId);
         }
         query = query.OrderBy(x => x.Name);
         return ListResult<object>.Success(query, filterOptions);
@@ -37,14 +38,14 @@ public class RoomRepository(ApplicationDbContext context) : EfRepository<Room>(c
     {
         var query = from t in _context.Tables
                     join r in _context.Rooms on t.RoomId equals r.Id
-                    join d in _context.Districts on r.DistrictId equals d.Id
+                    join d in _context.Branches on r.BranchId equals d.Id
                     select new
                     {
                         t.Id,
                         t.Name,
                         t.RoomId,
                         RoomName = r.Name,
-                        r.DistrictId,
+                        r.BranchId,
                         DistrictName = d.Name
                     };
         if (!string.IsNullOrWhiteSpace(filterOptions.Name))
@@ -55,9 +56,9 @@ public class RoomRepository(ApplicationDbContext context) : EfRepository<Room>(c
         {
             query = query.Where(x => x.RoomId == filterOptions.RoomId);
         }
-        if (filterOptions.DistrictId.HasValue)
+        if (filterOptions.BranchId.HasValue)
         {
-            query = query.Where(x => x.DistrictId == filterOptions.DistrictId);
+            query = query.Where(x => x.BranchId == filterOptions.BranchId);
         }
         query = query.OrderBy(x => x.Name);
         return ListResult<object>.Success(query, filterOptions);

@@ -8,10 +8,9 @@ public class Room : AuditEntity<int>
 {
     [StringLength(256)]
     public string Name { get; set; } = default!;
-    [ForeignKey(nameof(District))]
-    public int DistrictId { get; set; }
+    [ForeignKey(nameof(Branch))]
+    public int BranchId { get; set; }
 
-    public virtual District? District { get; set; }
+    public virtual Branch? Branch { get; set; }
     public virtual ICollection<Table>? Tables { get; set; }
-    public virtual ICollection<Event>? Events { get; set; }
 }

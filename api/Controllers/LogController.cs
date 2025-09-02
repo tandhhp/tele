@@ -1,23 +1,15 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using Waffle.Core.Constants;
+﻿using Microsoft.AspNetCore.Mvc;
 using Waffle.Core.Foundations;
 using Waffle.Core.Interfaces.IService;
+using Waffle.Core.Services.Histories.Models;
 using Waffle.Models;
 
 namespace Waffle.Controllers;
 
-public class LogController : BaseController
+public class LogController(ILogService _logService) : BaseController
 {
-    private readonly ILogService _logService;
-
-    public LogController(ILogService appLogService)
-    {
-        _logService = appLogService;
-    }
-
     [HttpGet("list")]
-    public async Task<IActionResult> ListAsync([FromQuery] SearchFilterOptions filterOptions) => Ok(await _logService.ListAsync(filterOptions));
+    public async Task<IActionResult> ListAsync([FromQuery] HistoryFilterOptions filterOptions) => Ok(await _logService.ListAsync(filterOptions));
 
     [HttpPost("delete/{id}")]
     public async Task<IActionResult> DeleteAsync([FromRoute] Guid id) => Ok(await _logService.DeleteAsync(id));

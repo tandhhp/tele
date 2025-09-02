@@ -33,7 +33,7 @@ public class RoomController(IRoomService _roomService) : BaseController
         {
             data.Name,
             data.Id,
-            data.DistrictId
+            data.BranchId
         }));
     }
 }

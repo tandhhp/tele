@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Waffle.Core.Foundations;
-using Waffle.Core.Interfaces.IRepository.Tele;
+using Waffle.Core.Interfaces.IRepository.Calls;
 using Waffle.Data;
 using Waffle.Entities.Contacts;
 using Waffle.Models;

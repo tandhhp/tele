@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Waffle.Core.Constants;
 using Waffle.Core.Foundations;
 using Waffle.Core.Interfaces.IService;
 using Waffle.Data;
@@ -9,7 +8,6 @@ using Waffle.Entities;
 using Waffle.Entities.Ecommerces;
 using Waffle.Entities.Payments;
 using Waffle.Extensions;
-using Waffle.ExternalAPI.Interfaces;
 using Waffle.Models;
 using Waffle.Models.Params.Products;
 
@@ -99,15 +97,6 @@ public class OrderController : BaseController
         if (trans is null) return BadRequest("Không tìm thấy giao dịch");
         trans.Feedback = args.Feedback;
         _context.Transactions.Update(trans);
-
-        await _context.AppLogs.AddAsync(new AppLog
-        {
-            CatalogId = Guid.NewGuid(),
-            CreatedDate = DateTime.Now,
-            UserId = User.GetId(),
-            Message = $"Cập nhật feedback sử dụng điểm"
-        });
-
         await _context.SaveChangesAsync();
         return Ok();
     }

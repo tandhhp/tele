@@ -22,15 +22,15 @@ public class TableRepository(ApplicationDbContext context) : EfRepository<Table>
                         a.CreatedDate,
                         RoomName = b.Name,
                         a.RoomId,
-                        b.DistrictId
+                        b.BranchId
                     };
         if (filterOptions.RoomId.HasValue)
         {
             query = query.Where(x => x.RoomId == filterOptions.RoomId);
         }
-        if (filterOptions.DistrictId != null)
+        if (filterOptions.BranchId != null)
         {
-            query = query.Where(x => x.DistrictId == filterOptions.DistrictId);
+            query = query.Where(x => x.BranchId == filterOptions.BranchId);
         }
         if (!string.IsNullOrWhiteSpace(filterOptions.Name))
         {

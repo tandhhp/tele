@@ -29,6 +29,8 @@ public class DistrictService(IDistrictRepository _districtRepository) : IDistric
         return TResult.Success;
     }
 
+    public Task<District?> FindAsync(int id) => _districtRepository.FindAsync(id);
+
     public Task<ListResult<object>> ListAsync(DistrictFilterOptions filterOptions) => _districtRepository.ListAsync(filterOptions);
 
     public Task<object> OptionsAsync(DistrictSelectOptions selectOptions) => _districtRepository.OptionsAsync(selectOptions);

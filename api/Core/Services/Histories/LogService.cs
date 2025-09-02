@@ -1,23 +1,22 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using Waffle.Core.Interfaces;
 using Waffle.Core.Interfaces.IRepository;
 using Waffle.Core.Interfaces.IService;
+using Waffle.Core.Services.Histories.Models;
 using Waffle.Entities;
 using Waffle.Models;
 using Waffle.Models.Histories;
 
-namespace Waffle.Core.Services;
+namespace Waffle.Core.Services.Histories;
 
-public class LogService(IWebHostEnvironment _webHostEnvironment, ICurrentUser _currentUser, ILogRepository _logRepository) : ILogService
+public class LogService(IWebHostEnvironment _webHostEnvironment, ILogRepository _logRepository, IHCAService _hcaService) : ILogService
 {
     public async Task AddAsync(string message, Guid? catalogId)
     {
         await _logRepository.AddAsync(new AppLog
         {
             Message = message,
-            CatalogId = catalogId ?? Guid.Empty,
             CreatedDate = DateTime.Now,
-            UserId = _currentUser.GetId()
+            UserName = _hcaService.GetUserName()
         });
     }
 
@@ -45,10 +44,9 @@ public class LogService(IWebHostEnvironment _webHostEnvironment, ICurrentUser _c
         {
             Message = ex.ToString(),
             CreatedDate = DateTime.Now,
-            UserId = _currentUser.GetId(),
-            CatalogId = Guid.Empty
+            UserName = _hcaService.GetUserName()
         });
     }
 
-    public Task<ListResult<HistoryListItem>> ListAsync(SearchFilterOptions filterOptions) => _logRepository.ListAsync(filterOptions);
+    public Task<ListResult<HistoryListItem>> ListAsync(HistoryFilterOptions filterOptions) => _logRepository.ListAsync(filterOptions);
 }

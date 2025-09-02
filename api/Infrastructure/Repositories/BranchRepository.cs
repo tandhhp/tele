@@ -13,11 +13,14 @@ public class BranchRepository(ApplicationDbContext context) : EfRepository<Branc
     public async Task<ListResult<object>> ListAsync(BranchFilterOptions filterOptions)
     {
         var query = from a in _context.Branches
+                    join d in _context.Districts on a.DistrictId equals d.Id
                     select new
                     {
                         a.Id,
                         a.Name,
                         DepartmentCount = _context.Departments.Count(d => d.BranchId == a.Id),
+                        a.DistrictId,
+                        DistrictName = d.Name
                     };
         if (!string.IsNullOrEmpty(filterOptions.Name))
         {

@@ -5,7 +5,9 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
 using Waffle.Core.Constants;
+using Waffle.Core.Interfaces.IService;
 using Waffle.Core.Options;
+using Waffle.Core.Services;
 using Waffle.Data;
 using Waffle.Entities;
 using Waffle.Extensions;
@@ -22,6 +24,8 @@ builder.Services
     .AddRoles<ApplicationRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddDefaultTokenProviders();
+
+builder.Services.AddTransient<IHCAService, HCAService>();
 
 builder.Services.AddServices();
 builder.Services.AddHttpClients();

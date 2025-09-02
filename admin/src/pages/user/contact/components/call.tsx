@@ -1,5 +1,5 @@
 import { apiCallOptions } from "@/services/call";
-import { DrawerForm, DrawerFormProps, ProFormDatePicker, ProFormSelect, ProFormText, ProFormTimePicker } from "@ant-design/pro-components"
+import { DrawerForm, DrawerFormProps, ProFormDatePicker, ProFormSelect, ProFormText, ProFormTextArea, ProFormTimePicker } from "@ant-design/pro-components"
 import { Col, Row } from "antd";
 
 type Props = DrawerFormProps & {
@@ -44,7 +44,7 @@ const CallForm: React.FC<Props> = (props) => {
             <ProFormText label="Thói quen du lịch" name="travelHabit" />
             <ProFormText label="Tuổi" name="age" />
             <ProFormText label="Nghề nghiệp" name="job" />
-            <ProFormText label="Khác" name="other" />
+            <ProFormTextArea label="Ghi chú" name="note" />
         </DrawerForm>
     )
 }

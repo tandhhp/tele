@@ -507,6 +507,12 @@ export default [
     hideInMenu: true
   },
   {
+    name: 'Lịch sử',
+    path: '/history',
+    component: './history',
+    icon: 'HistoryOutlined'
+  },
+  {
     path: '*',
     layout: false,
     component: './404',

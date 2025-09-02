@@ -231,29 +231,6 @@ public class UserController : BaseController
         return Ok(await _userService.GetUsersInRoleAsync(roleName, filterOptions));
     }
 
-    [HttpGet("trainer/list-user")]
-    public async Task<IActionResult> GetUsersInTrainerAsync([FromQuery] UserFilterOptions filterOptions)
-    {
-        var userId = User.GetId();
-        var query = from a in _context.Users
-                    where a.TrainerId == userId
-                    select a;
-        if (!string.IsNullOrEmpty(filterOptions.PhoneNumber))
-        {
-            query = query.Where(x => x.PhoneNumber != null && x.PhoneNumber.Contains(filterOptions.PhoneNumber));
-        }
-        if (!string.IsNullOrEmpty(filterOptions.Name))
-        {
-            query = query.Where(x => !string.IsNullOrEmpty(x.Name) && x.Name.ToLower().Contains(filterOptions.Name.ToLower()));
-        }
-        if (!string.IsNullOrEmpty(filterOptions.Email))
-        {
-            query = query.Where(x => !string.IsNullOrEmpty(x.Email) && x.Email.ToLower().Contains(filterOptions.Email.ToLower()));
-        }
-        query = query.OrderByDescending(x => x.CreatedDate);
-        return Ok(await ListResult<object>.Success(query, filterOptions));
-    }
-
     [HttpPost("add-to-role")]
     public async Task<IActionResult> AddToRoleAsync([FromBody] AddToRoleModel model)
     {
@@ -392,8 +369,7 @@ public class UserController : BaseController
                 DosId = args.DosId,
                 SmId = args.SmId,
                 Branch = args.Branch,
-                TmId = args.TmId,
-                TrainerId = args.TrainerId
+                TmId = args.TmId
             };
             var result = await _userManager.CreateAsync(user, args.Password);
             if (!result.Succeeded) return Ok(result);
@@ -432,7 +408,6 @@ public class UserController : BaseController
             user.Branch = args.Branch;
             user.ContractDate = args.ContractDate;
             user.MaxLoyalty = args.MaxLoyalty;
-            user.TrainerId = args.TrainerId;
             user.SellerId = args.SellerId;
             user.Branch = args.Branch;
             if (await _userManager.IsInRoleAsync(user, RoleName.SalesManager) || await _userManager.IsInRoleAsync(user, RoleName.Sales))

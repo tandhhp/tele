@@ -56,5 +56,7 @@ public class ContactService(IContactRepository _contactRepository, ILogService _
         }
     }
 
+    public Task<Contact?> FindAsync(Guid id) => _contactRepository.FindAsync(id);
+
     public Task<ListResult<object>> GetBlacklistAsync(BlacklistFilterOptions filterOptions) => _contactRepository.GetBlacklistAsync(filterOptions);
 }

@@ -13,5 +13,5 @@ public class District : BaseEntity<int>
 
     public Province? Province { get; set; }
     public virtual ICollection<Contact>? Contacts { get; set; }
-    public virtual ICollection<Room>? Rooms { get; set; }
+    public virtual ICollection<Branch>? Branches { get; set; }
 }

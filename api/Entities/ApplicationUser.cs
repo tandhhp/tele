@@ -15,6 +15,7 @@ public class ApplicationUser : IdentityUser<Guid>
     public DateTime? DateOfBirth { get; set; }
     public bool? Gender { get; set; }
     public int Loyalty { get; set; }
+    [StringLength(2048)]
     public string? Avatar { get; set; }
     public DateTime CreatedDate { get; set; }
     public string? IdentityNumber { get; set; }
@@ -32,7 +33,6 @@ public class ApplicationUser : IdentityUser<Guid>
     public int Token { get; set; }
     public int NextLoyalty { get; set; }
     public DateTime? LoyaltyExpiredDate { get; set; }
-    public Guid? RefId { get; set; }
 
     [ForeignKey(nameof(Card))]
     public Guid? CardId { get; set; }
@@ -50,16 +50,16 @@ public class ApplicationUser : IdentityUser<Guid>
     //public bool? NeedSendEmail { get; set; }
     public Guid? TmId { get; set; }
     public UserStatus Status { get; set; }
-    public Guid? TrainerId { get; set; }
     public Guid? DotId { get; set; }
     public int? TeamId { get; set; }
 
     [JsonIgnore]
     public Card? Card { get; set; }
     [JsonIgnore]
-    public List<SubUser>? SubUsers { get; set; }
+    public ICollection<SubUser>? SubUsers { get; set; }
 
     public virtual ICollection<UserPoint>? UserPoints { get; set; }
+    public virtual ICollection<AppLog>? Logs { get; set; }
 }
 
 public enum Branch1
