@@ -7,7 +7,7 @@ const ContactStatistics: React.FC = () => {
     const { data } = useRequest(apiContactStatistics)
 
     return (
-        <ProCard title="Thống kê liên hệ" headerBordered size="small">
+        <ProCard title="Thống kê liên hệ" headerBordered>
             <div>
                 <Statistic value={data?.totalCurrentYear || 0}
                     layout="vertical"

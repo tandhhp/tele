@@ -1,14 +1,34 @@
-import { apiCallOptions } from "@/services/call";
-import { DrawerForm, DrawerFormProps, ProFormDatePicker, ProFormSelect, ProFormText, ProFormTextArea, ProFormTimePicker } from "@ant-design/pro-components"
-import { Col, Row } from "antd";
+import { apiCallComplete, apiCallOptions } from "@/services/call";
+import { PhoneOutlined } from "@ant-design/icons";
+import { DrawerForm, DrawerFormProps, ProFormDatePicker, ProFormInstance, ProFormSelect, ProFormText, ProFormTextArea, ProFormTimePicker } from "@ant-design/pro-components"
+import { Button, Col, message, Row } from "antd";
+import { useRef } from "react";
 
 type Props = DrawerFormProps & {
     data?: any;
+    reload?: () => void;
 }
 
 const CallForm: React.FC<Props> = (props) => {
+
+    const formRef = useRef<ProFormInstance>(null);
+
+    const onFinish = async (values: any) => {
+        if (!props.data) {
+            message.error('Liên hệ không tồn tại');
+            return false;
+        }
+        values.contactId = props.data?.id;
+        await apiCallComplete(values);
+        message.success('Lưu thành công');
+        formRef.current?.resetFields();
+        props.reload?.();
+        return true;
+    }
+
     return (
-        <DrawerForm {...props} title="Cuộc gọi">
+        <DrawerForm {...props} title={`Cuộc gọi ${props.data?.name}`} onFinish={onFinish} formRef={formRef}>
+            <Button type="primary" icon={<PhoneOutlined />} block href={`tel:${props.data?.phoneNumber}`} className="mb-4">Gọi điện</Button>
             <Row gutter={[16, 16]}>
                 <Col xs={24} md={12}>
                     <ProFormSelect name={`callStatusId`} label="Trạng thái" request={apiCallOptions} showSearch

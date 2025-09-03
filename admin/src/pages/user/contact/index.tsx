@@ -1,8 +1,8 @@
 import { deleteContact, listContact } from "@/services/contact";
-import { DeleteOutlined, EditOutlined, EyeOutlined, FolderOutlined, ManOutlined, MoreOutlined, PhoneOutlined, PlusOutlined, StopOutlined, WomanOutlined } from "@ant-design/icons";
+import { DeleteOutlined, EditOutlined, EyeOutlined, ManOutlined, MoreOutlined, PhoneOutlined, PlusOutlined, StopOutlined, WomanOutlined } from "@ant-design/icons";
 import { ActionType, PageContainer, ProColumnType, ProTable } from "@ant-design/pro-components"
-import { history, Link } from "@umijs/max";
-import { Button, Dropdown, Popconfirm, Tooltip, message } from "antd";
+import { history } from "@umijs/max";
+import { Button, Dropdown, Popconfirm, message } from "antd";
 import { useRef, useState } from "react";
 import BlockContactModal from "./components/block-modal";
 import ContactForm from "./components/form";
@@ -53,6 +53,11 @@ const ContactPage: React.FC = () => {
         {
             title: 'Phụ trách',
             dataIndex: 'userName',
+            search: false
+        },
+        {
+            title: 'Lượt gọi',
+            dataIndex: 'callCount',
             search: false
         },
         {
@@ -130,7 +135,7 @@ const ContactPage: React.FC = () => {
                 actionRef.current?.reload();
             }} onOpenChange={setOpenBlock} />
             <ContactForm open={openForm} onOpenChange={setOpenForm} reload={() => actionRef.current?.reload()} />
-            <CallForm open={openCall} data={contact} onOpenChange={setOpenCall} />
+            <CallForm open={openCall} data={contact} onOpenChange={setOpenCall} reload={() => actionRef.current?.reload()} />
         </PageContainer>
     )
 }

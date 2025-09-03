@@ -65,13 +65,6 @@ export const apiRemoveEventLead = (data: any) => request(`contact/event/remove-l
 }) 
 
 export async function listLead(params: any) {
-  if (params.eventRange) {
-    params = {
-      ...params,
-      fromDate: params.eventRange[0],
-      toDate: params.eventRange[1]
-    }
-  }
   return request(`contact/lead/list`, { params });
 }
 
@@ -209,4 +202,8 @@ export async function apiContactUpdate(data: any) {
 
 export async function apiContactStatistics() {
   return request(`contact/statistics`);
+}
+
+export async function apiContactGet(id?: string) {
+  return request(`contact/${id}`);
 }

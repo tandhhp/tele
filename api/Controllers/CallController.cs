@@ -6,11 +6,14 @@ using Waffle.Models;
 
 namespace Waffle.Controllers;
 
-public class CallController(ICallStatusService _callStatusService) : BaseController
+public class CallController(ICallStatusService _callStatusService, ICallHistoryService _callHistoryService) : BaseController
 {
     [HttpGet("status/options")]
     public async Task<IActionResult> StatusOptionsAsync([FromQuery] SelectOptions options) => Ok(await _callStatusService.OptionsAsync(options));
 
     [HttpPost("complete")]
-    public async Task<IActionResult> CompleteAsync([FromBody] CallCompleteArgs args) => Ok(await _callStatusService.CompleteAsync(args));
+    public async Task<IActionResult> CompleteAsync([FromBody] CallCompleteArgs args) => Ok(await _callHistoryService.CompleteAsync(args));
+
+    [HttpGet("histories")]
+    public async Task<IActionResult> HistoriesAsync([FromQuery] CallHistoryFilterOptions filterOptions) => Ok(await _callHistoryService.HistoriesAsync(filterOptions));
 }

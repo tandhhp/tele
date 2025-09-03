@@ -315,7 +315,8 @@ Thông tin liên hệ của Bộ phận <b><i>Trải Nghiệm Khách Hàng</i></
                         a.Note,
                         a.Gender,
                         a.UserId,
-                        b.UserName
+                        b.UserName,
+                        CallCount = _context.CallHistories.Count(x => x.ContactId == a.Id)
                     };
         if (!string.IsNullOrWhiteSpace(filterOptions.PhoneNumber))
         {

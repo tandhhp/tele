@@ -468,6 +468,11 @@ export default [
         name: 'Nghề nghiệp',
         path: '/settings/job-kind',
         component: './settings/job-kind'
+      },
+      {
+        name: 'Chi nhánh',
+        path: '/settings/branch',
+        component: './settings/branch'
       }
     ],
   },

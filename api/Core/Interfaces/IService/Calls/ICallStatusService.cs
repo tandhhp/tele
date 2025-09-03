@@ -5,6 +5,5 @@ namespace Waffle.Core.Interfaces.IService.Calls;
 
 public interface ICallStatusService
 {
-    Task<TResult> CompleteAsync(CallCompleteArgs args);
     Task<object> OptionsAsync(SelectOptions options);
 }

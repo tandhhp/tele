@@ -1,13 +1,14 @@
 import { apiDistrictList } from "@/services/settings/district";
 import { DeleteOutlined, LeftOutlined, PlusOutlined, SettingOutlined } from "@ant-design/icons";
 import { ActionType, PageContainer, ProTable } from "@ant-design/pro-components"
-import { history } from "@umijs/max";
+import { history, useParams } from "@umijs/max";
 import { Button, Popconfirm } from "antd";
 import DistrictForm from "./components/form";
 import { useRef, useState } from "react";
 
 const Index: React.FC = () => {
 
+    const { id } = useParams<{ id: string }>();
     const actionRef = useRef<ActionType>();
     const [open, setOpen] = useState<boolean>(false);
 
@@ -15,6 +16,7 @@ const Index: React.FC = () => {
         <PageContainer extra={<Button icon={<LeftOutlined />} onClick={() => history.back()}>Quay lại</Button>}>
             <ProTable
                 actionRef={actionRef}
+                params={{ provinceId: id }}
                 headerTitle={<Button type="primary" icon={<PlusOutlined />} onClick={() => setOpen(true)}>Thêm mới</Button>}
                 columns={[
                     {

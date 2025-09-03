@@ -4,7 +4,7 @@ using Waffle.Core.Interfaces.IService;
 using Waffle.Models;
 using Waffle.Models.Branches;
 
-namespace Waffle.Controllers;
+namespace Waffle.Controllers.Settings;
 
 public class BranchController(IBranchService _branchService) : BaseController
 {
