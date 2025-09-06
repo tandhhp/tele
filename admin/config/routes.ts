@@ -225,88 +225,33 @@ export default [
     ],
   },
   {
-    name: 'Nội dung',
-    path: '/catalog',
-    icon: 'SlackOutlined',
+    icon: 'IdcardOutlined',
+    name: 'Liên hệ',
+    path: '/contact',
     routes: [
       {
-        name: 'Chăm sóc sức khỏe',
-        path: '/catalog/product',
-        component: './catalog/products'
+        name: 'Danh bạ',
+        path: '/contact/index',
+        component: './contact'
       },
       {
-        name: 'Cơ sở khám',
-        path: '/catalog/hospital',
-        component: './catalog/hospital'
-      },
-      {
-        name: 'Gói khám',
-        path: '/catalog/hospital/package/:id',
-        component: './catalog/hospital/package',
+        name: 'Chi tiết liên hệ',
+        path: '/contact/center/:id',
+        component: './contact/center',
         hideInMenu: true
       },
       {
-        name: 'Dưỡng sinh độc bản',
-        path: '/catalog/tour',
-        component: './tour'
-      },
-      {
-        name: 'Danh sách khách sạn',
-        path: '/catalog/room',
-        component: './tour/room'
-      },
-      {
-        name: 'Tin tức',
-        path: '/catalog/article',
-        component: './catalog/article',
-        hideInMenu: true
-      },
-      {
-        name: 'Trang',
-        path: '/catalog/page',
-        component: './catalog/page'
-      },
-      {
-        name: 'Địa điểm',
-        path: '/catalog/city',
-        component: './catalog/city'
-      },
-      {
-        name: 'Bình luận',
-        path: '/catalog/comments',
-        component: './comments'
-      },
-      {
-        name: 'Thành tựu',
-        icon: 'TrophyOutlined',
-        path: '/catalog/achievement',
-        component: './achievement',
-        access: 'canCXM'
+        name: 'Blacklist',
+        path: '/contact/blacklist',
+        component: './contact/blacklist'
       }
     ]
-  },
-  {
-    name: 'catalog',
-    path: '/catalog/:id',
-    component: './catalog',
-    hideInMenu: true
-  },
-  {
-    icon: 'ShoppingCartOutlined',
-    name: 'Đơn đăng ký',
-    path: '/form',
-    component: './tour/forms'
   },
   {
     icon: 'TeamOutlined',
     name: 'Người dùng',
     path: '/user',
     routes: [
-      {
-        name: 'Chủ thẻ',
-        path: '/user/member',
-        component: './user/member'
-      },
       {
         name: 'Hồ sơ',
         path: '/user/profile',
@@ -320,12 +265,6 @@ export default [
         hideInMenu: true,
       },
       {
-        name: 'Hoạt động',
-        path: '/user/contact/center/:id',
-        component: './user/contact/center',
-        hideInMenu: true
-      },
-      {
         name: 'Nhân viên',
         path: '/user/roles',
         component: './user/roles'
@@ -337,20 +276,10 @@ export default [
         hideInMenu: true
       },
       {
-        name: 'Liên hệ',
-        path: '/user/contact',
-        component: './user/contact'
-      },
-      {
         name: 'Thông báo',
         path: '/user/notification',
         component: './notification',
         hideInMenu: true
-      },
-      {
-        name: 'Blacklist',
-        path: '/user/blacklist',
-        component: './user/contact/blacklist'
       },
       {
         name: 'Phòng - Ban',

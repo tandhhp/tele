@@ -8,10 +8,12 @@ public class Campaign : AuditEntity<int>
     public string Name { get; set; } = default!;
     [StringLength(256)]
     public string? Code { get; set; }
-    public CampainStatus Status { get; set; }
+    public CampaignStatus Status { get; set; }
+
+    public virtual ICollection<Event>? Events { get; set; }
 }
 
-public enum CampainStatus
+public enum CampaignStatus
 {
     Inactive = 0,
     Active = 1,

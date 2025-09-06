@@ -16,4 +16,7 @@ public class CallController(ICallStatusService _callStatusService, ICallHistoryS
 
     [HttpGet("histories")]
     public async Task<IActionResult> HistoriesAsync([FromQuery] CallHistoryFilterOptions filterOptions) => Ok(await _callHistoryService.HistoriesAsync(filterOptions));
+
+    [HttpGet("statistics")]
+    public async Task<IActionResult> StatisticsAsync() => Ok(await _callHistoryService.StatisticsAsync());
 }

@@ -1,7 +1,7 @@
 import { apiCampaignList } from "@/services/event/campaign";
-import { EditOutlined, PlusOutlined, SettingOutlined } from "@ant-design/icons";
+import { DeleteOutlined, EditOutlined, MoreOutlined, PlusOutlined, SettingOutlined } from "@ant-design/icons";
 import { ActionType, PageContainer, ProTable } from "@ant-design/pro-components"
-import { Button, Dropdown } from "antd";
+import { Button, Dropdown, Popconfirm } from "antd";
 import { useRef, useState } from "react";
 import CampaignForm from "./components/form";
 
@@ -28,8 +28,31 @@ const Index: React.FC = () => {
                     align: 'center'
                 },
                 {
+                    title: 'Mã chiến dịch',
+                    dataIndex: 'code',
+                    search: false,
+                    width: 150
+                },
+                {
                     title: 'Tên chiến dịch',
                     dataIndex: 'name'
+                },
+                {
+                    title: 'Số sự kiện',
+                    dataIndex: 'eventCount',
+                    search: false,
+                    width: 100,
+                    valueType: 'digit'
+                },
+                {
+                    title: 'Trạng thái',
+                    dataIndex: 'status',
+                    valueEnum: {
+                        0: { text: 'Không hoạt động', status: 'Default' },
+                        1: { text: 'Hoạt động', status: 'Processing' },
+                        2: { text: 'Hoàn thành', status: 'Success' }
+                    },
+                    width: 150,
                 },
                 {
                     title: <SettingOutlined />,
@@ -49,8 +72,11 @@ const Index: React.FC = () => {
                                 }
                             ]
                         }}>
-                            <Button type="dashed" size="small" icon={<EditOutlined />} />
-                        </Dropdown>
+                            <Button type="dashed" size="small" icon={<MoreOutlined />} />
+                        </Dropdown>,
+                        <Popconfirm key={"delete"} title="Bạn có chắc chắn muốn xóa chiến dịch này?" okText="Xóa" cancelText="Hủy">
+                            <Button type="primary" size="small" danger icon={<DeleteOutlined />}></Button>
+                        </Popconfirm>
                     ]
                 }
             ]}

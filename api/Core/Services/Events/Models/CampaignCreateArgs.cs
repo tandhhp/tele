@@ -6,5 +6,5 @@ public class CampaignCreateArgs
 {
     public string? Name { get; set; }
     public string Code { get; set; } = default!;
-    public CampainStatus Status { get; set; }
+    public CampaignStatus Status { get; set; }
 }

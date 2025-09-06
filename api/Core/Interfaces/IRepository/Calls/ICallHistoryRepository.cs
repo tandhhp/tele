@@ -7,4 +7,5 @@ namespace Waffle.Core.Interfaces.IRepository.Calls;
 public interface ICallHistoryRepository : IAsyncRepository<CallHistory>
 {
     Task<ListResult<object>> HistoriesAsync(CallHistoryFilterOptions filterOptions);
+    Task<TResult<object>> StatisticsAsync();
 }

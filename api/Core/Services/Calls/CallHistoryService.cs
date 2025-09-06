@@ -41,4 +41,6 @@ public class CallHistoryService(ICallHistoryRepository _callHistoryRepository, I
             return TResult.Failed(ex.ToString());
         }
     }
+
+    public Task<TResult<object>> StatisticsAsync() => _callHistoryRepository.StatisticsAsync();
 }

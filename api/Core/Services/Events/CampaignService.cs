@@ -17,7 +17,8 @@ public class CampaignService(ICampaignRepository _campaignRepository, IHCAServic
             Name = args.Name,
             CreatedBy = _hcaService.GetUserId(),
             CreatedDate = DateTime.Now,
-            Status = args.Status
+            Status = args.Status,
+            Code = args.Code
         });
         return TResult.Success;
     }
@@ -26,6 +27,7 @@ public class CampaignService(ICampaignRepository _campaignRepository, IHCAServic
     {
         var campaign = await _campaignRepository.FindAsync(id);
         if (campaign == null) return TResult.Failed("Chiến dịch không tồn tại!");
+        if (await _campaignRepository.HasEventAsync(id)) return TResult.Failed("Chiến dịch đang được sử dụng, không thể xóa!");
         await _campaignRepository.DeleteAsync(campaign);
         return TResult.Success;
     }
@@ -57,6 +59,7 @@ public class CampaignService(ICampaignRepository _campaignRepository, IHCAServic
         if (string.IsNullOrWhiteSpace(args.Name)) return TResult.Failed("Vui lòng nhập tên chiến dịch!");
         campaign.Name = args.Name;
         campaign.Status = args.Status;
+        campaign.Code = args.Code;
         campaign.ModifiedBy = _hcaService.GetUserId();
         campaign.ModifiedDate = DateTime.Now;
         await _campaignRepository.UpdateAsync(campaign);

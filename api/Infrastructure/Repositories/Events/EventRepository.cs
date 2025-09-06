@@ -12,15 +12,16 @@ public class EventRepository(ApplicationDbContext context) : EfRepository<Event>
     public async Task<ListResult<object>> GetListAsync(EventFilterOptions filterOptions)
     {
         var query = from e in _context.Events
-                    join u in _context.Users on e.CreatedBy equals u.Id
+                    join c in _context.Campaigns on e.CampaignId equals c.Id into ec from c in ec.DefaultIfEmpty()
                     select new
                     {
                         e.Id,
                         e.Name,
-                        u.UserName,
                         e.CreatedDate,
                         e.StartDate,
-                        CreatedBy = u.Name
+                        CampaignName = c.Name,
+                        e.CampaignId,
+                        e.Status
                     };
         if (!string.IsNullOrWhiteSpace(filterOptions.Name))
         {

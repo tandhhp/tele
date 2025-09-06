@@ -75,7 +75,7 @@ const ContactPage: React.FC = () => {
                             key: 'view',
                             label: 'Chi tiết',
                             onClick: () => {
-                                history.push(`/user/contact/center/${entity.id}`);
+                                history.push(`/contact/center/${entity.id}`);
                             },
                             icon: <EyeOutlined />
                         },

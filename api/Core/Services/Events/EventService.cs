@@ -13,7 +13,7 @@ using Waffle.Models;
 
 namespace Waffle.Core.Services.Events;
 
-public class EventService(ApplicationDbContext _context, IEventRepository _eventRepository, ILogService _logService, ICurrentUser _currentUser, UserManager<ApplicationUser> _userManager, IWebHostEnvironment webHostEnvironment) : IEventService
+public class EventService(ApplicationDbContext _context, IEventRepository _eventRepository, ILogService _logService, ICurrentUser _currentUser, UserManager<ApplicationUser> _userManager, IWebHostEnvironment webHostEnvironment, ICampaignService _campaignService) : IEventService
 {
     private readonly IWebHostEnvironment _webHostEnvironment = webHostEnvironment;
 
@@ -93,13 +93,20 @@ public class EventService(ApplicationDbContext _context, IEventRepository _event
     {
         try
         {
+            if (args.CampaignId.HasValue)
+            {
+                var campaign = await _campaignService.GetAsync(args.CampaignId.Value);
+                if (campaign is null) return TResult.Failed("Chiến dịch không tồn tại!");
+            }
+            await _logService.AddAsync($"Tạo sự kiện {args.Name} vào ngày {args.StartDate.Date.Add(args.StartTime):dd/MM/yyyy HH:mm}");
             await _eventRepository.AddAsync(new Event
             {
                 Name = args.Name,
                 StartDate = args.StartDate.Date.Add(args.StartTime),
                 CreatedBy = _currentUser.GetId(),
                 CreatedDate = DateTime.Now,
-                Status = args.Status
+                Status = args.Status,
+                CampaignId = args.CampaignId
             });
             return TResult.Success;
         }
@@ -135,6 +142,20 @@ public class EventService(ApplicationDbContext _context, IEventRepository _event
             await _logService.AddAsync($"Xóa doanh thu sự kiện cho {topup.LeadId}");
         }
         return TResult.Success;
+    }
+
+    public async Task<TResult<object>> DetailAsync(int id)
+    {
+        var data = await _eventRepository.FindAsync(id);
+        if (data is null) return TResult<object>.Failed("Sự kiện không tồn tại!");
+        return TResult<object>.Ok(new
+        {
+            data.Id,
+            data.Name,
+            data.StartDate,
+            data.Status,
+            data.CampaignId
+        });
     }
 
     public Task<ListResult<object>> GetListAsync(EventFilterOptions filterOptions) => _eventRepository.GetListAsync(filterOptions);
@@ -249,11 +270,13 @@ public class EventService(ApplicationDbContext _context, IEventRepository _event
     {
         var data = await _eventRepository.FindAsync(args.Id);
         if (data is null) return TResult.Failed("Sự kiện không tồn tại!");
+        await _logService.AddAsync($"Cập nhật sự kiện {data.Name}");
         data.Name = args.Name;
         data.ModifiedBy = _currentUser.GetId();
         data.ModifiedDate = DateTime.Now;
         data.StartDate = args.StartDate.Date.Add(args.StartTime);
         data.Status = args.Status;
+        data.CampaignId = args.CampaignId;
         await _eventRepository.UpdateAsync(data);
         return TResult.Success;
     }

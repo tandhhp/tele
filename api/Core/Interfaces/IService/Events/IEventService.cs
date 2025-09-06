@@ -17,4 +17,5 @@ public interface IEventService
     Task<TResult> DeleteAsync(int id);
     Task<TResult> UpdateAsync(EventUpdateArgs args);
     Task<TResult> CreateAsync(EventCreateArgs args);
+    Task<TResult<object>> DetailAsync(int id);
 }

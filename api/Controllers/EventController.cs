@@ -1,10 +1,8 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Waffle.Core.Constants;
 using Waffle.Core.Foundations;
 using Waffle.Core.Interfaces.IService.Events;
 using Waffle.Core.Services.Events.Models;
-using Waffle.Data;
 
 namespace Waffle.Controllers;
 
@@ -48,4 +46,7 @@ public class EventController(IEventService _eventService) : BaseController
 
     [HttpGet("list")]
     public async Task<IActionResult> GetListAsync([FromQuery] EventFilterOptions filterOptions) => Ok(await _eventService.GetListAsync(filterOptions));
+
+    [HttpGet("{id:int}")]
+    public async Task<IActionResult> DetailAsync([FromRoute] int id) => Ok(await _eventService.DetailAsync(id));
 }

@@ -1,4 +1,5 @@
-﻿using Waffle.Core.Foundations;
+﻿using Microsoft.EntityFrameworkCore;
+using Waffle.Core.Foundations;
 using Waffle.Core.Interfaces.IRepository.Calls;
 using Waffle.Core.Services.Calls.Models;
 using Waffle.Data;
@@ -32,5 +33,24 @@ public class CallHistoryRepository(ApplicationDbContext context) : EfRepository<
         }
         query = query.OrderByDescending(x => x.CreatedDate);
         return await ListResult<object>.Success(query, filterOptions);
+    }
+
+    public async Task<TResult<object>> StatisticsAsync()
+    {
+        var currentYear = DateTime.Now.Year;
+        var currentMonth = DateTime.Now.Month;
+        var previousMonth = currentMonth == 1 ? 12 : currentMonth - 1;
+        var totalCalls = await _context.CallHistories.CountAsync();
+        var currentMonthCalls = await _context.CallHistories.CountAsync(ch => ch.CreatedDate.Year == currentYear && ch.CreatedDate.Month == currentMonth);
+        var previousMonthCalls = await _context.CallHistories.CountAsync(ch => ch.CreatedDate.Year == currentYear && ch.CreatedDate.Month == previousMonth);
+        var yearlyCalls = await _context.CallHistories.CountAsync(x => x.CreatedDate.Year == currentYear);
+        var statistics = new
+        {
+            TotalCalls = totalCalls,
+            CurrentMonthCalls = currentMonthCalls,
+            PreviousMonthCalls = previousMonthCalls,
+            YearlyCalls = yearlyCalls
+        };
+        return TResult<object>.Ok(statistics);
     }
 }

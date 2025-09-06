@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.IdentityModel.Abstractions;
 using Waffle.Core.Interfaces.IRepository;
 using Waffle.Core.Interfaces.IService;
 using Waffle.Core.Services.Histories.Models;
@@ -10,15 +11,7 @@ namespace Waffle.Core.Services.Histories;
 
 public class LogService(IWebHostEnvironment _webHostEnvironment, ILogRepository _logRepository, IHCAService _hcaService) : ILogService
 {
-    public async Task AddAsync(string message, Guid? catalogId)
-    {
-        await _logRepository.AddAsync(new AppLog
-        {
-            Message = message,
-            CreatedDate = DateTime.Now,
-            UserName = _hcaService.GetUserName()
-        });
-    }
+    public async Task AddAsync(string message, EventLogLevel level = EventLogLevel.LogAlways) => await _logRepository.AddAsync(message, level);
 
     public Task<IdentityResult> DeleteAllAsync() => _logRepository.DeleteAllAsync();
 

@@ -1,7 +1,8 @@
 import { apiCampaignCreate, apiCampaignDetail, apiCampaignUpdate } from "@/services/event/campaign";
-import { ModalForm, ModalFormProps, ProFormInstance, ProFormText } from "@ant-design/pro-components"
-import { message } from "antd";
+import { ModalForm, ModalFormProps, ProFormInstance, ProFormSelect, ProFormText } from "@ant-design/pro-components"
+import { Col, message, Row } from "antd";
 import { useEffect, useRef } from "react";
+import { CampaignStatus } from "../enum";
 
 type Props = ModalFormProps & {
     data?: any;
@@ -27,6 +28,10 @@ const CampaignForm: React.FC<Props> = (props) => {
                     {
                         name: 'name',
                         value: res.data.name
+                    },
+                    {
+                        name: 'status',
+                        value: res.data.status
                     }
                 ])
             });
@@ -48,7 +53,30 @@ const CampaignForm: React.FC<Props> = (props) => {
     return (
         <ModalForm {...props} title="Chiến dịch" formRef={formRef} onFinish={onFinish}>
             <ProFormText name={"id"} hidden />
-            <ProFormText name={"code"} label="Mã chiến dịch" rules={[{ required: true }]} />
+            <Row gutter={16}>
+                <Col xs={24} md={16}>
+                    <ProFormText name={"code"} label="Mã chiến dịch" rules={[{ required: true }]} />
+                </Col>
+                <Col xs={24} md={8}>
+                    <ProFormSelect
+                        options={[
+                            {
+                                value: CampaignStatus.Inactive,
+                                label: 'Không hoạt động'
+                            },
+                            {
+                                value: CampaignStatus.Active,
+                                label: 'Hoạt động'
+                            },
+                            {
+                                value: CampaignStatus.Completed,
+                                label: 'Hoàn thành'
+                            }
+                        ]}
+                        allowClear={false}
+                        name={"status"} label="Trạng thái" rules={[{ required: true }]} />
+                </Col>
+            </Row>
             <ProFormText name={"name"} label="Tên chiến dịch" rules={[{ required: true }]} />
         </ModalForm>
     )

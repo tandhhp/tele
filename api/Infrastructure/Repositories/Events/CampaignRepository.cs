@@ -10,6 +10,8 @@ namespace Waffle.Infrastructure.Repositories.Events;
 
 public class CampaignRepository(ApplicationDbContext context) : EfRepository<Campaign>(context), ICampaignRepository
 {
+    public async Task<bool> HasEventAsync(int id) => await _context.Events.AnyAsync(e => e.CampaignId == id);
+
     public async Task<ListResult<object>> ListAsync(CampaignFilter filter)
     {
         var query = from c in _context.Campaigns
@@ -21,11 +23,17 @@ public class CampaignRepository(ApplicationDbContext context) : EfRepository<Cam
                         c.CreatedBy,
                         c.ModifiedDate,
                         c.ModifiedBy,
-                        c.Code
+                        c.Code,
+                        c.Status,
+                        EventCount = _context.Events.Count(e => e.CampaignId == c.Id)
                     };
         if (!string.IsNullOrWhiteSpace(filter.Name))
         {
             query = query.Where(c => c.Name.ToLower().Contains(filter.Name.ToLower()));
+        }
+        if (filter.Status.HasValue)
+        {
+            query = query.Where(c => c.Status == filter.Status);
         }
         query = query.OrderByDescending(c => c.CreatedDate);
         return await ListResult<object>.Success(query, filter);
@@ -33,6 +41,7 @@ public class CampaignRepository(ApplicationDbContext context) : EfRepository<Cam
 
     public async Task<object> OptionsAsync(SelectFilterOptions filterOptions) => await _context.Campaigns
         .Where(x => string.IsNullOrEmpty(filterOptions.KeyWords) || x.Name.ToLower().Contains(filterOptions.KeyWords.ToLower()))
+        .Where(x => x.Status == CampaignStatus.Active)
         .Select(x => new
         {
             Label = x.Name,

@@ -16,9 +16,7 @@ const HomePage: React.FC = () => {
         }} initialValue={1} />
       </ProForm>
     )}>
-      <div className='grid grid-cols-1 md:grid-cols-4 gap-4 mb-4'>
-        <ContactStatistics />
-        <ContactStatistics />
+      <div className='grid grid-cols-1 md:grid-cols-2 gap-4 mb-4'>
         <ContactStatistics />
         <ContactStatistics />
       </div>

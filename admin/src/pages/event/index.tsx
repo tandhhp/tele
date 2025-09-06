@@ -1,6 +1,5 @@
-import { DeleteOutlined, EditOutlined, FolderOutlined, PlusOutlined } from "@ant-design/icons";
+import { DeleteOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
 import { ActionType, PageContainer, ProTable } from "@ant-design/pro-components"
-import { Link, request } from "@umijs/max";
 import { Button } from "antd";
 import { useRef, useState } from "react";
 import EventForm from "./components/form";
@@ -31,6 +30,11 @@ const EventPage: React.FC = () => {
                     {
                         title: 'Tên sự kiện',
                         dataIndex: 'name'
+                    },
+                    {
+                        title: 'Chiến dịch',
+                        dataIndex: 'campaignName',
+                        search: false
                     },
                     {
                         title: 'Ngày diễn ra',

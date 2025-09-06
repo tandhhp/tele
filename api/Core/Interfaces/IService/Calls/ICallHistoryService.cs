@@ -7,4 +7,5 @@ public interface ICallHistoryService
 {
     Task<ListResult<object>> HistoriesAsync(CallHistoryFilterOptions filterOptions);
     Task<TResult> CompleteAsync(CallCompleteArgs args);
+    Task<TResult<object>> StatisticsAsync();
 }

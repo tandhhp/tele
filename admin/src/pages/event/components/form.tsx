@@ -1,4 +1,5 @@
 import { apiEventAdd, apiEventUpdate } from "@/services/event";
+import { apiCampaignOptions } from "@/services/event/campaign";
 import { ModalForm, ModalFormProps, ProFormDatePicker, ProFormDateTimePicker, ProFormInstance, ProFormSelect, ProFormText, ProFormTimePicker } from "@ant-design/pro-components"
 import { Col, message, Row } from "antd";
 import { useRef } from "react";
@@ -32,6 +33,7 @@ const EventForm: React.FC<Props> = (props) => {
                     required: true
                 }
             ]} />
+            <ProFormSelect name={`campaignId`} label="Chiến dịch" request={apiCampaignOptions} showSearch />
             <Row gutter={16}>
                 <Col xs={12} md={6}>
                     <ProFormDatePicker name="startDate" width={`lg`} label="Ngày giờ diễn ra" rules={[{ required: true }]} />

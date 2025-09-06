@@ -6,6 +6,7 @@ namespace Waffle.Core.Interfaces.IRepository.Events;
 
 public interface ICampaignRepository : IAsyncRepository<Campaign>
 {
+    Task<bool> HasEventAsync(int id);
     Task<ListResult<object>> ListAsync(CampaignFilter filter);
     Task<object> OptionsAsync(SelectFilterOptions filterOptions);
 }
