@@ -496,6 +496,11 @@ export default [
         path: '/event/room/table/:id',
         component: './event/room/table',
         hideInMenu: true
+      },
+      {
+        name: 'Chiến dịch',
+        path: '/event/campaign',
+        component: './event/campaign'
       }
     ]
   },

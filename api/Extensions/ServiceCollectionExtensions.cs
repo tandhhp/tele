@@ -70,6 +70,8 @@ public static class ServiceCollectionExtensions
         services.AddScoped<ITableService, TableService>();
         services.AddScoped<ICallHistoryRepository, CallHistoryRepository>();
         services.AddScoped<ICallHistoryService, CallHistoryService>();
+        services.AddScoped<ICampaignRepository, CampaignRepository>();
+        services.AddScoped<ICampaignService, CampaignService>();
 
         services.AddScoped<IKeyInService, KeyInService>();
         services.AddScoped<ILoanService, LoanService>();
