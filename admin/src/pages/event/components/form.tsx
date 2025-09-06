@@ -1,8 +1,9 @@
-import { apiEventAdd, apiEventUpdate } from "@/services/event";
+import { apiEventAdd, apiEventDetail, apiEventUpdate } from "@/services/event";
 import { apiCampaignOptions } from "@/services/event/campaign";
-import { ModalForm, ModalFormProps, ProFormDatePicker, ProFormDateTimePicker, ProFormInstance, ProFormSelect, ProFormText, ProFormTimePicker } from "@ant-design/pro-components"
+import { ModalForm, ModalFormProps, ProFormDatePicker, ProFormInstance, ProFormSelect, ProFormText, ProFormTimePicker } from "@ant-design/pro-components"
 import { Col, message, Row } from "antd";
-import { useRef } from "react";
+import dayjs from "dayjs";
+import { useEffect, useRef } from "react";
 
 type Props = ModalFormProps & {
     data?: any;
@@ -13,9 +14,37 @@ const EventForm: React.FC<Props> = (props) => {
 
     const formRef = useRef<ProFormInstance>(null);
 
+    useEffect(() => {
+        if (props.data) {
+            apiEventDetail(props.data.id).then(res => {
+                formRef.current?.setFields([
+                    {
+                        name: 'id',
+                        value: res.data.id
+                    },
+                    {
+                        name: 'name',
+                        value: res.data.name
+                    },
+                    {
+                        name: 'startDate',
+                        value: dayjs(res.data.startDate)
+                    },
+                    {
+                        name: 'startTime',
+                        value: dayjs(res.data.startTime)
+                    },
+                    {
+                        name: 'status',
+                        value: res.data.status
+                    }
+                ])
+            });
+        }
+    }, [props.data]);
+
     const onFinish = async (values: any) => {
         if (props.data) {
-            values.id = props.data.id;
             await apiEventUpdate(values);
         } else {
             await apiEventAdd(values);
@@ -28,6 +57,7 @@ const EventForm: React.FC<Props> = (props) => {
 
     return (
         <ModalForm {...props} title="Sự kiện" formRef={formRef} onFinish={onFinish}>
+            <ProFormText name={`id`} hidden />
             <ProFormText name={`name`} label="Tên sự kiện" rules={[
                 {
                     required: true

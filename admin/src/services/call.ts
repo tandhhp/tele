@@ -14,3 +14,7 @@ export async function apiCallComplete(data: any) {
 export async function apiCallHistories(params: any) {
     return await request('call/histories', { params });
 }
+
+export async function apiCallStatistics() {
+    return await request('call/statistics');
+}

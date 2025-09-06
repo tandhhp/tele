@@ -5,6 +5,7 @@ import TopSales from './components/top-month';
 import SmChart from './components/sm-chart';
 import { apiBranchOptions } from '@/services/settings/branch';
 import ContactStatistics from './components/contact';
+import CallStatistics from './components/call';
 
 const HomePage: React.FC = () => {
 
@@ -18,7 +19,7 @@ const HomePage: React.FC = () => {
     )}>
       <div className='grid grid-cols-1 md:grid-cols-2 gap-4 mb-4'>
         <ContactStatistics />
-        <ContactStatistics />
+        <CallStatistics />
       </div>
       <Row gutter={16}>
         <Col xs={24} md={18}>

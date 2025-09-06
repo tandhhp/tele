@@ -54,3 +54,7 @@ export async function apiEventList(params: any) {
         params
     });
 }
+
+export async function apiEventDetail(id: number) {
+    return request(`event/${id}`);
+}
